@@ -3,1912 +3,460 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analyse Fondamentale Complète - Actions</title>
+<title>Analyse Fondamentale Actions</title>
 <style>
-  :root {
-    --bg-primary: #0a0e17;
-    --bg-secondary: #111827;
-    --bg-card: #1a2235;
-    --bg-card-hover: #1e2a42;
-    --border: #2a3a5c;
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --accent-blue: #3b82f6;
-    --accent-blue-glow: rgba(59, 130, 246, 0.3);
-    --green: #10b981;
-    --green-bg: rgba(16, 185, 129, 0.12);
-    --green-border: rgba(16, 185, 129, 0.3);
-    --orange: #f59e0b;
-    --orange-bg: rgba(245, 158, 11, 0.12);
-    --orange-border: rgba(245, 158, 11, 0.3);
-    --red: #ef4444;
-    --red-bg: rgba(239, 68, 68, 0.12);
-    --red-border: rgba(239, 68, 68, 0.3);
-    --gold: #fbbf24;
-    --silver: #9ca3af;
-    --bronze: #d97706;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    line-height: 1.6;
-  }
-
-  .app-container {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  /* Header */
-  .header {
-    text-align: center;
-    padding: 40px 20px 30px;
-    position: relative;
-  }
-
-  .header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
-  }
-
-  .header h1 {
-    font-size: 2.2em;
-    font-weight: 700;
-    background: linear-gradient(135deg, #60a5fa, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-  }
-
-  .header p {
-    color: var(--text-secondary);
-    font-size: 1.05em;
-  }
-
-  /* Input Section */
-  .input-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 30px;
-    margin: 30px 0;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .input-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent-blue), #a78bfa, var(--accent-blue));
-  }
-
-  .input-group {
-    display: flex;
-    gap: 12px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-  }
-
-  .input-wrapper {
-    flex: 1;
-    min-width: 300px;
-  }
-
-  .input-wrapper label {
-    display: block;
-    font-size: 0.85em;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .input-wrapper input {
-    width: 100%;
-    padding: 14px 18px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text-primary);
-    font-size: 1.05em;
-    font-family: 'Consolas', 'Monaco', monospace;
-    letter-spacing: 0.5px;
-    transition: all 0.3s;
-  }
-
-  .input-wrapper input:focus {
-    outline: none;
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 0 3px var(--accent-blue-glow);
-  }
-
-  .input-wrapper input::placeholder {
-    color: var(--text-muted);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-  }
-
-  .presets {
-    display: flex;
-    gap: 8px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-  }
-
-  .preset-btn {
-    padding: 6px 14px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    color: var(--text-secondary);
-    font-size: 0.82em;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .preset-btn:hover {
-    border-color: var(--accent-blue);
-    color: var(--accent-blue);
-    background: rgba(59, 130, 246, 0.08);
-  }
-
-  .btn-analyze {
-    padding: 14px 36px;
-    background: linear-gradient(135deg, var(--accent-blue), #6366f1);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    white-space: nowrap;
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-analyze:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
-  }
-
-  .btn-analyze:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .btn-analyze .spinner {
-    display: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-right: 8px;
-  }
-
-  .btn-analyze.loading .spinner { display: inline-block; }
-  .btn-analyze.loading .btn-text { opacity: 0.8; }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* API Key Section */
-  .api-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 25px;
-    margin-bottom: 25px;
-  }
-
-  .api-section summary {
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 0.9em;
-    letter-spacing: 0.5px;
-  }
-
-  .api-content {
-    margin-top: 15px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-  }
-
-  .api-content .input-wrapper { min-width: 250px; }
-
-  .api-content input[type="password"],
-  .api-content input[type="text"] {
-    width: 100%;
-    padding: 10px 14px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 0.95em;
-  }
-
-  .api-note {
-    font-size: 0.8em;
-    color: var(--text-muted);
-    margin-top: 10px;
-    line-height: 1.5;
-  }
-
-  .api-note a { color: var(--accent-blue); }
-
-  /* Progress */
-  .progress-container {
-    display: none;
-    margin: 20px 0;
-  }
-
-  .progress-bar-track {
-    width: 100%;
-    height: 6px;
-    background: var(--bg-secondary);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-blue), #a78bfa);
-    border-radius: 3px;
-    width: 0%;
-    transition: width 0.5s ease;
-  }
-
-  .progress-text {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 0.88em;
-    color: var(--text-secondary);
-  }
-
-  /* Results */
-  .results-container {
-    display: none;
-  }
-
-  .section {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 24px;
-    overflow: hidden;
-    transition: all 0.3s;
-  }
-
-  .section:hover {
-    border-color: rgba(59, 130, 246, 0.2);
-  }
-
-  .section-header {
-    padding: 20px 25px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .section-header .icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2em;
-    flex-shrink: 0;
-  }
-
-  .section-header .icon.blue { background: rgba(59, 130, 246, 0.15); }
-  .section-header .icon.purple { background: rgba(139, 92, 246, 0.15); }
-  .section-header .icon.green { background: rgba(16, 185, 129, 0.15); }
-  .section-header .icon.amber { background: rgba(245, 158, 11, 0.15); }
-  .section-header .icon.rose { background: rgba(244, 63, 94, 0.15); }
-
-  .section-header h2 {
-    font-size: 1.15em;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .section-body {
-    padding: 25px;
-  }
-
-  /* Data Table */
-  .table-wrapper {
-    overflow-x: auto;
-    border-radius: 10px;
-  }
-
-  .data-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 0.88em;
-  }
-
-  .data-table thead th {
-    background: var(--bg-secondary);
-    padding: 12px 14px;
-    text-align: center;
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 0.82em;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    border-bottom: 2px solid var(--border);
-    white-space: nowrap;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-  }
-
-  .data-table thead th:first-child {
-    text-align: left;
-    border-radius: 8px 0 0 0;
-    position: sticky;
-    left: 0;
-    z-index: 3;
-  }
-
-  .data-table thead th:last-child {
-    border-radius: 0 8px 0 0;
-  }
-
-  .data-table tbody td {
-    padding: 12px 14px;
-    text-align: center;
-    border-bottom: 1px solid rgba(42, 58, 92, 0.4);
-    white-space: nowrap;
-  }
-
-  .data-table tbody td:first-child {
-    text-align: left;
-    font-weight: 600;
-    position: sticky;
-    left: 0;
-    background: var(--bg-card);
-    z-index: 1;
-  }
-
-  .data-table tbody tr:hover td {
-    background: var(--bg-card-hover);
-  }
-
-  .data-table tbody tr:hover td:first-child {
-    background: var(--bg-card-hover);
-  }
-
-  .data-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  /* Cell colors */
-  .cell-green {
-    color: var(--green);
-    font-weight: 600;
-  }
-
-  .cell-orange {
-    color: var(--orange);
-    font-weight: 600;
-  }
-
-  .cell-red {
-    color: var(--red);
-    font-weight: 600;
-  }
-
-  .cell-ticker {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .ticker-symbol {
-    font-family: 'Consolas', monospace;
-    font-size: 1.05em;
-    color: var(--accent-blue);
-  }
-
-  .ticker-sector {
-    font-size: 0.75em;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
-
-  /* Score Badge */
-  .score-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 0.85em;
-  }
-
-  .score-high {
-    background: var(--green-bg);
-    color: var(--green);
-    border: 1px solid var(--green-border);
-  }
-
-  .score-mid {
-    background: var(--orange-bg);
-    color: var(--orange);
-    border: 1px solid var(--orange-border);
-  }
-
-  .score-low {
-    background: var(--red-bg);
-    color: var(--red);
-    border: 1px solid var(--red-border);
-  }
-
-  /* Verdict Cards */
-  .verdict-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-    gap: 18px;
-  }
-
-  .verdict-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 22px;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .verdict-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-  }
-
-  .verdict-card.quality::before { background: var(--green); }
-  .verdict-card.neutral::before { background: var(--orange); }
-  .verdict-card.avoid::before { background: var(--red); }
-
-  .verdict-card:hover {
-    border-color: rgba(59, 130, 246, 0.3);
-    transform: translateY(-2px);
-  }
-
-  .verdict-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 14px;
-  }
-
-  .verdict-ticker {
-    font-family: 'Consolas', monospace;
-    font-size: 1.3em;
-    font-weight: 700;
-    color: var(--accent-blue);
-  }
-
-  .verdict-label {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75em;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-
-  .label-quality {
-    background: var(--green-bg);
-    color: var(--green);
-    border: 1px solid var(--green-border);
-  }
-
-  .label-neutral {
-    background: var(--orange-bg);
-    color: var(--orange);
-    border: 1px solid var(--orange-border);
-  }
-
-  .label-avoid {
-    background: var(--red-bg);
-    color: var(--red);
-    border: 1px solid var(--red-border);
-  }
-
-  .verdict-text {
-    color: var(--text-secondary);
-    font-size: 0.9em;
-    line-height: 1.7;
-    margin-bottom: 14px;
-  }
-
-  .verdict-flags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .flag {
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-size: 0.75em;
-    font-weight: 600;
-  }
-
-  .flag-green { background: var(--green-bg); color: var(--green); }
-  .flag-red { background: var(--red-bg); color: var(--red); }
-
-  /* Ranking */
-  .ranking-category {
-    margin-bottom: 24px;
-  }
-
-  .ranking-category:last-child { margin-bottom: 0; }
-
-  .ranking-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.05em;
-    font-weight: 600;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .ranking-title.cat-a { color: var(--green); }
-  .ranking-title.cat-b { color: var(--orange); }
-  .ranking-title.cat-c { color: var(--red); }
-
-  .ranking-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 16px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-  }
-
-  .ranking-item:hover {
-    border-color: var(--border);
-  }
-
-  .rank-number {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85em;
-    flex-shrink: 0;
-  }
-
-  .rank-gold { background: rgba(251, 191, 36, 0.15); color: var(--gold); }
-  .rank-silver { background: rgba(156, 163, 175, 0.15); color: var(--silver); }
-  .rank-bronze { background: rgba(217, 119, 6, 0.15); color: var(--bronze); }
-  .rank-normal { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
-
-  .rank-ticker {
-    font-family: 'Consolas', monospace;
-    font-weight: 700;
-    color: var(--accent-blue);
-    min-width: 60px;
-  }
-
-  .rank-reason {
-    color: var(--text-secondary);
-    font-size: 0.9em;
-    flex: 1;
-  }
-
-  /* Summary */
-  .summary-text {
-    color: var(--text-secondary);
-    line-height: 1.8;
-    font-size: 0.95em;
-  }
-
-  .summary-text p {
-    margin-bottom: 16px;
-  }
-
-  .summary-text strong {
-    color: var(--text-primary);
-  }
-
-  /* Sector Analysis */
-  .sector-block {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 14px;
-  }
-
-  .sector-block:last-child { margin-bottom: 0; }
-
-  .sector-name {
-    font-weight: 600;
-    color: var(--accent-blue);
-    font-size: 1.05em;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .sector-text {
-    color: var(--text-secondary);
-    font-size: 0.9em;
-    line-height: 1.7;
-  }
-
-  /* Tooltip */
-  .cell-value {
-    position: relative;
-    cursor: default;
-  }
-
-  .cell-value[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.82em;
-    white-space: nowrap;
-    z-index: 10;
-    pointer-events: none;
-    font-weight: 400;
-  }
-
-  /* Error */
-  .error-message {
-    background: var(--red-bg);
-    border: 1px solid var(--red-border);
-    border-radius: 10px;
-    padding: 16px 20px;
-    color: var(--red);
-    margin: 15px 0;
-    display: none;
-    font-size: 0.92em;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .header h1 { font-size: 1.5em; }
-    .input-group { flex-direction: column; }
-    .input-wrapper { min-width: 100%; }
-    .verdict-grid { grid-template-columns: 1fr; }
-    .section-body { padding: 18px; }
-    .data-table { font-size: 0.8em; }
-  }
-
-  /* Source info */
-  .source-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
-    background: rgba(59, 130, 246, 0.06);
-    border: 1px solid rgba(59, 130, 246, 0.15);
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 0.84em;
-    color: var(--text-muted);
-  }
-
-  .source-info .info-icon {
-    font-size: 1.1em;
-    flex-shrink: 0;
-  }
-
-  /* Mode toggle */
-  .mode-toggle {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .mode-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    font-size: 0.85em;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .mode-btn.active {
-    background: rgba(59, 130, 246, 0.15);
-    border-color: var(--accent-blue);
-    color: var(--accent-blue);
-  }
-
-  .mode-btn:hover {
-    border-color: var(--accent-blue);
-  }
-
-  /* Timestamp */
-  .timestamp {
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.82em;
-    margin-top: 30px;
-    padding: 15px;
-    border-top: 1px solid var(--border);
-  }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b0f1a;color:#e0e4ef;min-height:100vh}
+.app{max-width:1500px;margin:0 auto;padding:15px}
+h1{text-align:center;font-size:1.6em;padding:18px;background:linear-gradient(135deg,#161b2e,#1a2040);border:1px solid #2a3055;border-radius:12px;margin-bottom:15px}
+h1 span{background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.search{background:#131829;border:1px solid #252b48;border-radius:12px;padding:18px;margin-bottom:15px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+input[type=text]{flex:1;min-width:200px;padding:10px 14px;background:#0e1225;border:2px solid #2a3055;border-radius:8px;color:#e0e4ef;font-size:.95em}
+input:focus{outline:none;border-color:#3b82f6}
+.btn{padding:10px 18px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85em;transition:.2s}
+.btn-go{background:linear-gradient(135deg,#3b82f6,#7c3aed);color:#fff}
+.btn-go:hover{transform:translateY(-1px);box-shadow:0 4px 15px #3b82f644}
+.btn-x{background:#1e1535;color:#ef4444;border:1px solid #ef444444}
+.btn-p{background:#0e1225;color:#94a3b8;border:1px solid #252b48;font-size:.8em;padding:6px 12px}
+.btn-p:hover{border-color:#06b6d4;color:#06b6d4}
+.tags{display:flex;flex-wrap:wrap;gap:6px;width:100%;margin-top:5px}
+.tag{display:flex;align-items:center;gap:5px;padding:4px 12px;background:#3b82f618;border:1px solid #3b82f644;border-radius:15px;font-size:.85em;font-weight:600;color:#60a5fa}
+.tag i{cursor:pointer;font-style:normal;opacity:.6}.tag i:hover{color:#ef4444;opacity:1}
+.presets{display:flex;flex-wrap:wrap;gap:5px;width:100%;margin-top:8px}
+.load{text-align:center;padding:40px;display:none}.load.on{display:block}
+.spin{width:36px;height:36px;border:3px solid #252b48;border-top-color:#3b82f6;border-radius:50%;animation:s .7s linear infinite;margin:0 auto 12px}
+@keyframes s{to{transform:rotate(360deg)}}
+.res{display:none}.res.on{display:block}
+.sec{background:#131829;border:1px solid #252b48;border-radius:12px;padding:20px;margin-bottom:15px}
+.sec-t{font-size:1.15em;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #252b48;display:flex;align-items:center;gap:8px}
+.sn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:linear-gradient(135deg,#3b82f6,#7c3aed);border-radius:6px;font-size:.75em;font-weight:800;color:#fff}
+.tw{overflow-x:auto;border-radius:8px;border:1px solid #252b48}
+table{width:100%;border-collapse:collapse;font-size:.8em;white-space:nowrap}
+th{background:#0e1225;padding:10px 8px;text-align:left;font-weight:700;color:#94a3b8;text-transform:uppercase;font-size:.72em;letter-spacing:.5px;border-bottom:2px solid #252b48;position:sticky;top:0}
+td{padding:9px 8px;border-bottom:1px solid #1e2340}
+tr:hover{background:#3b82f608}
+.tk{font-weight:700;color:#60a5fa}
+.sk{color:#64748b;font-size:.82em}
+.v{font-weight:700;display:block;font-size:.9em}
+.c{font-size:.7em;opacity:.65;display:block}
+.g{color:#10b981}.o{color:#f59e0b}.r{color:#ef4444}
+.sb{display:inline-block;padding:3px 8px;border-radius:5px;font-size:.82em;font-weight:700}
+.sg{background:#10b98118;color:#10b981;border:1px solid #10b98133}
+.so{background:#f59e0b18;color:#f59e0b;border:1px solid #f59e0b33}
+.sr{background:#ef444418;color:#ef4444;border:1px solid #ef444433}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:14px}
+.card{background:#0e1225;border:1px solid #252b48;border-radius:10px;padding:16px;transition:.2s}
+.card:hover{border-color:#3b82f6;transform:translateY(-2px)}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #1e2340}
+.ct{font-weight:800;color:#60a5fa;font-size:1.15em}
+.cs{font-size:.78em;color:#64748b;background:#7c3aed18;padding:3px 8px;border-radius:5px}
+.cb p{font-size:.88em;line-height:1.6;color:#94a3b8;margin-bottom:6px}
+.cb .h{color:#e0e4ef;font-weight:600}
+.cc{margin-top:10px;padding:10px 14px;border-radius:7px;font-weight:600;font-size:.85em}
+.cc-a{background:#10b98118;border:1px solid #10b98133;color:#10b981}
+.cc-b{background:#f59e0b18;border:1px solid #f59e0b33;color:#f59e0b}
+.cc-c{background:#ef444418;border:1px solid #ef444433;color:#ef4444}
+.rf{margin-top:8px;padding:8px 12px;background:#ef444408;border-left:3px solid #ef4444;border-radius:4px;font-size:.8em;color:#ef4444;font-weight:600}
+.rk{margin-bottom:18px}
+.rl{font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ri{padding:10px 14px;border-radius:8px;font-size:.88em;margin-bottom:6px;display:flex;gap:8px}
+.ri-a{background:#10b98112;border:1px solid #10b98128}
+.ri-b{background:#f59e0b12;border:1px solid #f59e0b28}
+.ri-c{background:#ef444412;border:1px solid #ef444428}
+.ri strong{min-width:55px;color:#e0e4ef}
+.st p{font-size:.9em;line-height:1.7;color:#94a3b8;margin-bottom:10px;padding:12px 15px;background:#0e1225;border-radius:8px;border-left:3px solid #3b82f6}
+.st strong{color:#e0e4ef}
+.sb-blk{background:#131829;border:1px solid #252b48;border-radius:10px;padding:16px;margin-bottom:10px}
+.sb-n{font-weight:700;color:#06b6d4;margin-bottom:8px;font-size:1em}
+.sb-c{color:#94a3b8;font-size:.88em;line-height:1.6}
+.sb-c p{margin-bottom:6px}
+.note{text-align:center;padding:15px;color:#475569;font-size:.78em;border-top:1px solid #252b48;margin-top:20px}
+.ib{display:flex;gap:15px;flex-wrap:wrap;margin-bottom:12px;font-size:.82em;color:#475569}
+.id{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}
+.eb{display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px}
+details{background:#131829;border:1px solid #252b48;border-radius:10px;padding:14px;margin-bottom:15px}
+summary{cursor:pointer;font-weight:600;color:#94a3b8;font-size:.9em}
+.err{padding:14px;background:#ef444418;border:1px solid #ef444433;border-radius:8px;color:#ef4444;display:none;margin-bottom:12px}
+.err.on{display:block}
+@media(max-width:768px){.app{padding:8px}h1{font-size:1.2em}.grid{grid-template-columns:1fr}table{font-size:.72em}.search{flex-direction:column}}
 </style>
 </head>
 <body>
-
-<div class="app-container">
-  <div class="header">
-    <h1>📊 Analyse Fondamentale Complète</h1>
-    <p>Analyse multi-critères de qualité, valorisation et solidité financière</p>
-  </div>
-
-  <!-- API Key -->
-  <details class="api-section">
-    <summary>⚙️ Configuration API (Financial Modeling Prep)</summary>
-    <div class="api-content">
-      <div class="input-wrapper" style="flex:1;">
-        <label>Clé API FMP</label>
-        <input type="password" id="apiKey" placeholder="Votre clé API FMP..." value="">
-      </div>
-      <button class="btn-analyze" onclick="saveApiKey()" style="padding:10px 20px;font-size:0.9em;">Sauvegarder</button>
-    </div>
-    <p class="api-note">
-      📌 Obtenez une clé gratuite sur <a href="https://financialmodelingprep.com/developer/docs/" target="_blank">financialmodelingprep.com</a> (250 requêtes/jour gratuites).<br>
-      La clé est sauvegardée localement dans votre navigateur.
-    </p>
-  </details>
-
-  <!-- Input -->
-  <div class="input-section">
-    <div class="input-group">
-      <div class="input-wrapper">
-        <label>Symboles boursiers (séparés par des virgules)</label>
-        <input type="text" id="tickerInput" placeholder="Ex: AAPL, MSFT, GOOGL, AMZN, NVDA" value="AAPL, MSFT, GOOGL, AMZN, NVDA">
-      </div>
-      <button class="btn-analyze" id="analyzeBtn" onclick="startAnalysis()">
-        <span class="spinner"></span>
-        <span class="btn-text">🔍 Analyser</span>
-      </button>
-    </div>
-    <div class="presets">
-      <button class="preset-btn" onclick="setPreset('AAPL, MSFT, GOOGL, AMZN, NVDA')">🇺🇸 Big Tech</button>
-      <button class="preset-btn" onclick="setPreset('JPM, BAC, GS, MS, WFC')">🏦 Banques US</button>
-      <button class="preset-btn" onclick="setPreset('JNJ, PFE, UNH, ABBV, MRK')">💊 Santé</button>
-      <button class="preset-btn" onclick="setPreset('XOM, CVX, COP, SLB, EOG')">⛽ Énergie</button>
-      <button class="preset-btn" onclick="setPreset('TSLA, F, GM, TM, RIVN')">🚗 Automobile</button>
-      <button class="preset-btn" onclick="setPreset('V, MA, PYPL, SQ, COIN')">💳 Fintech</button>
-      <button class="preset-btn" onclick="setPreset('DIS, NFLX, CMCSA, WBD, PARA')">🎬 Médias</button>
-      <button class="preset-btn" onclick="setPreset('AVGO, AMD, INTC, QCOM, TXN')">🔧 Semiconducteurs</button>
-    </div>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="modeAPI" onclick="setMode('api')">📡 Mode API (données réelles)</button>
-      <button class="mode-btn" id="modeDemo" onclick="setMode('demo')">🎭 Mode Démo (données simulées)</button>
-    </div>
-  </div>
-
-  <div class="error-message" id="errorMsg"></div>
-
-  <!-- Progress -->
-  <div class="progress-container" id="progressContainer">
-    <div class="progress-bar-track">
-      <div class="progress-bar-fill" id="progressBar"></div>
-    </div>
-    <p class="progress-text" id="progressText">Initialisation...</p>
-  </div>
-
-  <!-- Results -->
-  <div class="results-container" id="resultsContainer">
-
-    <!-- Source Info -->
-    <div class="source-info">
-      <span class="info-icon">ℹ️</span>
-      <span id="sourceInfoText">Données TTM / dernier exercice disponible — Sources : Financial Modeling Prep API (données Yahoo Finance, SEC filings). Analyse générée le <span id="analysisDate"></span></span>
-    </div>
-
-    <!-- 1. Tableau des ratios -->
-    <div class="section">
-      <div class="section-header">
-        <div class="icon blue">📋</div>
-        <h2>1. Tableau des Ratios Clés</h2>
-      </div>
-      <div class="section-body">
-        <div class="table-wrapper">
-          <table class="data-table" id="ratiosTable">
-            <thead>
-              <tr>
-                <th>Ticker / Secteur</th>
-                <th>P/E</th>
-                <th>PEG</th>
-                <th>ROE 5A</th>
-                <th>Quick R.</th>
-                <th>D/E</th>
-                <th>Marge N.</th>
-                <th>EV/EBITDA</th>
-                <th>Couv. Int.</th>
-                <th>Croiss. CA</th>
-                <th>FCF Yield</th>
-                <th>Payout</th>
-                <th>Score</th>
-              </tr>
-            </thead>
-            <tbody id="ratiosBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. Analyse sectorielle -->
-    <div class="section">
-      <div class="section-header">
-        <div class="icon purple">🏭</div>
-        <h2>2. Analyse par Secteur</h2>
-      </div>
-      <div class="section-body" id="sectorAnalysis"></div>
-    </div>
-
-    <!-- 3. Verdicts -->
-    <div class="section">
-      <div class="section-header">
-        <div class="icon green">⚖️</div>
-        <h2>3. Verdict Individuel</h2>
-      </div>
-      <div class="section-body">
-        <div class="verdict-grid" id="verdictGrid"></div>
-      </div>
-    </div>
-
-    <!-- 4. Classement -->
-    <div class="section">
-      <div class="section-header">
-        <div class="icon amber">🏆</div>
-        <h2>4. Classement Global</h2>
-      </div>
-      <div class="section-body" id="rankingSection"></div>
-    </div>
-
-    <!-- 5. Résumé -->
-    <div class="section">
-      <div class="section-header">
-        <div class="icon rose">📝</div>
-        <h2>5. Résumé Final</h2>
-      </div>
-      <div class="section-body">
-        <div class="summary-text" id="summaryText"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="timestamp" id="timestamp"></div>
+<div class="app">
+<h1>📊 <span>Analyse Fondamentale Complète</span></h1>
+<div class="search">
+<input type="text" id="ti" placeholder="Ticker (ex: AAPL, NASDAQ:TSLA)... Entrée pour ajouter" onkeydown="if(event.key==='Enter')A()">
+<button class="btn btn-go" onclick="A()">➕</button>
+<button class="btn btn-go" id="ab" onclick="R()">🚀 Analyser</button>
+<button class="btn btn-x" onclick="X()">🗑</button>
+<div class="tags" id="tl"></div>
+<div class="presets">
+<button class="btn btn-p" onclick="P(['AAPL','MSFT','GOOGL','AMZN','META'])">Big Tech</button>
+<button class="btn btn-p" onclick="P(['JPM','BAC','GS','WFC'])">Banques</button>
+<button class="btn btn-p" onclick="P(['JNJ','PFE','UNH','ABBV'])">Santé</button>
+<button class="btn btn-p" onclick="P(['XOM','CVX','COP','SLB'])">Énergie</button>
+<button class="btn btn-p" onclick="P(['NVDA','AMD','INTC','TSM'])">Semis</button>
+<button class="btn btn-p" onclick="P(['TSLA','F','GM','RIVN'])">Auto/EV</button>
 </div>
-
+</div>
+<details><summary>📋 Seuils de référence (cliquer)</summary>
+<div class="tw" style="margin-top:10px"><table><thead><tr><th>Critère</th><th class="g">🟢 Vert</th><th class="o">🟠 Orange</th><th class="r">🔴 Rouge</th></tr></thead><tbody>
+<tr><td>P/E</td><td class="g">≤16</td><td class="o">16-20</td><td class="r">≥20</td></tr>
+<tr><td>PEG</td><td class="g">≤1.0</td><td class="o">1.0-1.5</td><td class="r">≥1.5</td></tr>
+<tr><td>ROE 5a</td><td class="g">≥15%</td><td class="o">10-15%</td><td class="r">&lt;10%</td></tr>
+<tr><td>Quick R.</td><td class="g">≥1.0</td><td class="o">0.5-1.0</td><td class="r">&lt;0.5</td></tr>
+<tr><td>D/E</td><td class="g">≤0.5</td><td class="o">0.5-1.0</td><td class="r">&gt;1.0</td></tr>
+<tr><td>Marge N.</td><td class="g">≥10%</td><td class="o">5-10%</td><td class="r">&lt;5%</td></tr>
+<tr><td>EV/EBITDA</td><td class="g">≤8</td><td class="o">8-12</td><td class="r">≥12</td></tr>
+<tr><td>Couv. Int.</td><td class="g">≥5x</td><td class="o">3-5x</td><td class="r">&lt;3x</td></tr>
+<tr><td>Croiss. CA</td><td class="g">≥10%</td><td class="o">5-10%</td><td class="r">&lt;5%</td></tr>
+<tr><td>FCF Yield</td><td class="g">≥8%</td><td class="o">4-8%</td><td class="r">&lt;4%</td></tr>
+<tr><td>Payout</td><td class="g">20-80%</td><td class="o">&lt;20/&gt;80%</td><td class="r">&gt;100%</td></tr>
+</tbody></table></div></details>
+<div id="err" class="err"></div>
+<div id="ld" class="load"><div class="spin"></div><div id="lt">Chargement...</div><div id="ls" style="color:#475569;font-size:.85em;margin-top:5px"></div></div>
+<div id="res" class="res">
+<div class="eb"><button class="btn btn-p" onclick="CSV()">📥 CSV</button><button class="btn btn-p" onclick="window.print()">🖨</button></div>
+<div class="ib"><span><span class="id" style="background:#10b981"></span>Vert = OK</span><span><span class="id" style="background:#f59e0b"></span>Orange = Attention</span><span><span class="id" style="background:#ef4444"></span>Rouge = Alerte</span></div>
+<div class="sec" id="s1"></div>
+<div class="sec" id="s2"></div>
+<div class="sec" id="s3"></div>
+<div class="sec" id="s4"></div>
+<div class="sec" id="s5"></div>
+<div class="note">📊 Données Yahoo Finance (yfinance) via API proxy — TTM / dernier exercice<br>Sources croisées : StockAnalysis, Yahoo Finance, GuruFocus<br>⚠️ Ne constitue pas un conseil en investissement.</div>
+</div>
+</div>
 <script>
-// ==========================================
-// Configuration & State
-// ==========================================
-let currentMode = 'api';
-let analysisData = [];
+let T=[],D=[];
+const Q=s=>document.getElementById(s);
+function A(){const i=Q('ti'),v=i.value.trim();if(!v)return;v.split(/[,;\s]+/).forEach(p=>{let t=p.toUpperCase();if(t.includes(':'))t=t.split(':').pop();t=t.replace(/[^A-Z0-9.-]/g,'');if(t&&!T.includes(t))T.push(t)});i.value='';U()}
+function U(){Q('tl').innerHTML=T.map(t=>`<span class="tag">${t}<i onclick="T=T.filter(x=>x!=='${t}');U()">✕</i></span>`).join('')}
+function P(l){T=[...l];U()}
+function X(){T=[];D=[];U();Q('res').classList.remove('on');Q('err').classList.remove('on')}
 
-const THRESHOLDS = {
-  pe: { green: 16, orange: 20 },
-  peg: { green: 1.0, orange: 1.5 },
-  roe5: { green: 15, orange: 10 },
-  quickRatio: { green: 1.0, orange: 0.5 },
-  debtEquity: { green: 0.5, orange: 1.0 },
-  netMargin: { green: 10, orange: 5 },
-  evEbitda: { green: 8, orange: 12 },
-  interestCov: { green: 5, orange: 3 },
-  revenueGrowth: { green: 10, orange: 5 },
-  fcfYield: { green: 8, orange: 4 },
-  payout: { greenLow: 20, greenHigh: 80, orangeHigh: 100 }
-};
+// Yahoo Finance proxy APIs (no key needed)
+const PROXIES=[
+  t=>`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${t}?modules=defaultKeyStatistics,financialData,summaryDetail,assetProfile,incomeStatementHistory,balanceSheetHistory,cashflowStatementHistory,earningsTrend`,
+  t=>`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${t}?modules=defaultKeyStatistics,financialData,summaryDetail,assetProfile,incomeStatementHistory,balanceSheetHistory,cashflowStatementHistory`,
+];
 
-const SECTOR_DESCRIPTIONS = {
-  'Technology': { emoji: '💻', dynamics: 'Secteur porté par l\'IA, le cloud computing et la transformation numérique. Marges élevées, forte croissance du CA, dépenses R&D importantes. Risque de correction des valorisations en cas de hausse des taux.' },
-  'Communication Services': { emoji: '📡', dynamics: 'Secteur mixte combinant télécoms matures et médias numériques en transition. Pression sur les modèles publicitaires. Le streaming reste déficitaire pour certains acteurs.' },
-  'Consumer Cyclical': { emoji: '🛍️', dynamics: 'Secteur cyclique sensible à la confiance des consommateurs et aux taux. E-commerce mature, marges sous pression inflationniste. Différenciation forte entre leaders et suiveurs.' },
-  'Consumer Defensive': { emoji: '🛒', dynamics: 'Secteur défensif avec flux de trésorerie stables. Pricing power limité en période de désinflation. Dividendes attractifs mais croissance modérée.' },
-  'Healthcare': { emoji: '🏥', dynamics: 'Secteur résilient avec dynamique d\'innovation (biotech, medtech). Risque réglementaire sur les prix. Pipelines R&D cruciaux pour la valorisation.' },
-  'Financial Services': { emoji: '🏦', dynamics: 'Secteur bénéficiant des taux élevés pour les marges d\'intérêt. Risques : qualité du crédit, exposition immobilière. Banques systémiques sous régulation stricte.' },
-  'Energy': { emoji: '⛽', dynamics: 'Secteur cyclique dépendant des prix du pétrole/gaz. Transition énergétique en cours. Flux de trésorerie solides aux cours actuels, redistribution aux actionnaires.' },
-  'Industrials': { emoji: '🏗️', dynamics: 'Secteur lié au cycle économique et aux investissements infrastructure. Backlog solide mais ralentissement potentiel. Relocalisation comme catalyseur.' },
-  'Real Estate': { emoji: '🏢', dynamics: 'Secteur sous pression des taux d\'intérêt élevés. Bureaux en restructuration post-COVID. Data centers et logistique restent porteurs.' },
-  'Utilities': { emoji: '⚡', dynamics: 'Secteur défensif avec rendements de dividendes attractifs. Investissements massifs dans les réseaux et le renouvelable. Sensible aux taux longs.' },
-  'Basic Materials': { emoji: '🧱', dynamics: 'Secteur cyclique lié à la demande industrielle mondiale. Bénéficie de la relance infrastructure. Marges volatiles selon les prix des matières premières.' }
-};
-
-// ==========================================
-// API Functions
-// ==========================================
-function getApiKey() {
-  return document.getElementById('apiKey').value || localStorage.getItem('fmp_api_key') || '';
-}
-
-function saveApiKey() {
-  const key = document.getElementById('apiKey').value;
-  if (key) {
-    localStorage.setItem('fmp_api_key', key);
-    alert('Clé API sauvegardée !');
+// Multiple free proxy/CORS options
+async function yf(ticker){
+  const mods='defaultKeyStatistics,financialData,summaryDetail,assetProfile,incomeStatementHistory,balanceSheetHistory,cashflowStatementHistory';
+  const urls=[
+    `https://corsproxy.io/?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${ticker}?modules=${mods}`)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${ticker}?modules=${mods}`)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${ticker}?modules=${mods}`)}`,
+  ];
+  for(const u of urls){
+    try{
+      const r=await fetch(u);
+      if(!r.ok)continue;
+      const j=await r.json();
+      if(j.quoteSummary&&j.quoteSummary.result&&j.quoteSummary.result[0])return j.quoteSummary.result[0];
+    }catch(e){continue}
   }
-}
-
-function setPreset(tickers) {
-  document.getElementById('tickerInput').value = tickers;
-}
-
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById('modeAPI').classList.toggle('active', mode === 'api');
-  document.getElementById('modeDemo').classList.toggle('active', mode === 'demo');
-}
-
-// Load saved API key
-window.addEventListener('load', () => {
-  const savedKey = localStorage.getItem('fmp_api_key');
-  if (savedKey) document.getElementById('apiKey').value = savedKey;
-});
-
-// ==========================================
-// FMP API Data Fetching
-// ==========================================
-async function fetchFMPData(endpoint, apiKey) {
-  const base = 'https://financialmodelingprep.com/api/v3';
-  const sep = endpoint.includes('?') ? '&' : '?';
-  const url = `${base}${endpoint}${sep}apikey=${apiKey}`;
-  const resp = await fetch(url);
-  if (!resp.ok) throw new Error(`API error ${resp.status}: ${resp.statusText}`);
-  return resp.json();
-}
-
-async function fetchStockData(ticker, apiKey, updateProgress) {
-  const data = {};
-
-  updateProgress(`${ticker} : profil...`);
-  try {
-    const profile = await fetchFMPData(`/profile/${ticker}`, apiKey);
-    data.profile = profile[0] || {};
-  } catch(e) { data.profile = {}; }
-
-  updateProgress(`${ticker} : ratios...`);
-  try {
-    const ratios = await fetchFMPData(`/ratios-ttm/${ticker}`, apiKey);
-    data.ratiosTTM = ratios[0] || {};
-  } catch(e) { data.ratiosTTM = {}; }
-
-  try {
-    const ratiosAnnual = await fetchFMPData(`/ratios/${ticker}?limit=5`, apiKey);
-    data.ratiosAnnual = ratiosAnnual || [];
-  } catch(e) { data.ratiosAnnual = []; }
-
-  updateProgress(`${ticker} : métriques clés...`);
-  try {
-    const km = await fetchFMPData(`/key-metrics-ttm/${ticker}`, apiKey);
-    data.keyMetricsTTM = km[0] || {};
-  } catch(e) { data.keyMetricsTTM = {}; }
-
-  updateProgress(`${ticker} : croissance...`);
-  try {
-    const fg = await fetchFMPData(`/financial-growth/${ticker}?limit=1`, apiKey);
-    data.financialGrowth = fg[0] || {};
-  } catch(e) { data.financialGrowth = {}; }
-
-  updateProgress(`${ticker} : bilan...`);
-  try {
-    const inc = await fetchFMPData(`/income-statement/${ticker}?limit=1`, apiKey);
-    data.incomeStatement = inc[0] || {};
-  } catch(e) { data.incomeStatement = {}; }
-
-  try {
-    const ev = await fetchFMPData(`/enterprise-values/${ticker}?limit=1`, apiKey);
-    data.enterpriseValue = ev[0] || {};
-  } catch(e) { data.enterpriseValue = {}; }
-
-  return data;
-}
-
-function extractMetrics(ticker, raw) {
-  const p = raw.profile || {};
-  const rTTM = raw.ratiosTTM || {};
-  const kTTM = raw.keyMetricsTTM || {};
-  const fg = raw.financialGrowth || {};
-  const inc = raw.incomeStatement || {};
-  const ratiosAnnual = raw.ratiosAnnual || [];
-
-  // ROE 5 ans (moyenne)
-  let roe5 = null;
-  if (ratiosAnnual.length > 0) {
-    const roeValues = ratiosAnnual
-      .slice(0, 5)
-      .map(r => r.returnOnEquity)
-      .filter(v => v != null && !isNaN(v));
-    if (roeValues.length > 0) {
-      roe5 = (roeValues.reduce((a, b) => a + b, 0) / roeValues.length) * 100;
+  // Fallback: try v8 finance chart + v6 quote
+  try{
+    const cu=`https://corsproxy.io/?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v6/finance/quote?symbols=${ticker}`)}`;
+    const cr=await fetch(cu);
+    const cj=await cr.json();
+    if(cj.quoteResponse&&cj.quoteResponse.result&&cj.quoteResponse.result[0]){
+      return {_v6:cj.quoteResponse.result[0]};
     }
+  }catch(e){}
+  return null;
+}
+
+function rv(obj){
+  if(!obj)return null;
+  if(typeof obj==='number')return obj;
+  if(obj.raw!==undefined)return obj.raw;
+  if(obj.fmt){const n=parseFloat(obj.fmt.replace(/[,%]/g,''));return isNaN(n)?null:n}
+  return null;
+}
+
+function proc(ticker,d){
+  if(!d)return blank(ticker);
+
+  // v6 fallback
+  if(d._v6){
+    const q=d._v6;
+    return{
+      ticker,name:q.shortName||q.longName||ticker,sector:q.sector||'N/A',industry:q.industry||'',
+      price:q.regularMarketPrice||null,mcap:q.marketCap||null,
+      pe:q.trailingPE||null,peg:null,roe5y:null,
+      qr:null,de:null,nm:q.profitMargins||null,
+      eveb:q.enterpriseToEbitda||null,ic:null,
+      rg:q.revenueGrowth||null,fcfy:null,po:q.payoutRatio||null
+    };
   }
-  if (roe5 === null && rTTM.returnOnEquityTTM != null) {
-    roe5 = rTTM.returnOnEquityTTM * 100;
+
+  const ks=d.defaultKeyStatistics||{};
+  const fd=d.financialData||{};
+  const sd=d.summaryDetail||{};
+  const ap=d.assetProfile||{};
+
+  const pe=rv(sd.trailingPE)||rv(ks.trailingPE);
+  const peg=rv(ks.pegRatio);
+
+  // ROE - try current, use as proxy for 5y avg
+  let roe=rv(fd.returnOnEquity);
+
+  // Quick Ratio
+  const qr=rv(fd.quickRatio);
+
+  // Debt/Equity
+  const de=rv(fd.debtToEquity);
+  const deNorm=de!==null?de/100:null; // Yahoo returns as percentage
+
+  // Net Margin
+  const nm=rv(fd.profitMargins);
+
+  // EV/EBITDA
+  const eveb=rv(ks.enterpriseToEbitda);
+
+  // Interest coverage - compute from income statements
+  let ic=null;
+  try{
+    const is=d.incomeStatementHistory?.incomeStatementHistory;
+    if(is&&is[0]){
+      const ebit=rv(is[0].ebit);
+      const intExp=rv(is[0].interestExpense);
+      if(ebit&&intExp&&intExp!==0)ic=Math.abs(ebit/intExp);
+    }
+  }catch(e){}
+
+  // Revenue Growth
+  let rg=rv(fd.revenueGrowth);
+  if(rg===null){
+    try{
+      const is=d.incomeStatementHistory?.incomeStatementHistory;
+      if(is&&is.length>=2){
+        const r0=rv(is[0].totalRevenue),r1=rv(is[1].totalRevenue);
+        if(r0&&r1&&r1!==0)rg=(r0-r1)/Math.abs(r1);
+      }
+    }catch(e){}
   }
 
   // FCF Yield
-  let fcfYield = null;
-  if (kTTM.freeCashFlowYieldTTM != null) {
-    fcfYield = kTTM.freeCashFlowYieldTTM * 100;
+  let fcfy=null;
+  try{
+    const cf=d.cashflowStatementHistory?.cashflowStatements;
+    if(cf&&cf[0]){
+      const opcf=rv(cf[0].totalCashFromOperatingActivities);
+      const capex=rv(cf[0].capitalExpenditures);
+      const mcap=rv(sd.marketCap);
+      if(opcf!==null&&capex!==null&&mcap&&mcap>0){
+        fcfy=(opcf+capex)/mcap; // capex is negative
+      }
+    }
+  }catch(e){}
+  if(fcfy===null){
+    const fcf=rv(fd.freeCashflow);
+    const mcap=rv(sd.marketCap);
+    if(fcf&&mcap&&mcap>0)fcfy=fcf/mcap;
   }
 
-  // Payout Ratio
-  let payout = null;
-  if (rTTM.payoutRatioTTM != null) {
-    payout = rTTM.payoutRatioTTM * 100;
-  } else if (rTTM.dividendPayoutRatioTTM != null) {
-    payout = rTTM.dividendPayoutRatioTTM * 100;
-  }
+  // Payout
+  const po=rv(sd.payoutRatio);
 
-  // Revenue Growth
-  let revenueGrowth = null;
-  if (fg.revenueGrowth != null) {
-    revenueGrowth = fg.revenueGrowth * 100;
-  }
-
-  // Net Margin
-  let netMargin = null;
-  if (rTTM.netProfitMarginTTM != null) {
-    netMargin = rTTM.netProfitMarginTTM * 100;
-  }
-
-  // Interest Coverage
-  let interestCov = null;
-  if (rTTM.interestCoverageTTM != null) {
-    interestCov = rTTM.interestCoverageTTM;
-  }
-
-  // Quick Ratio
-  let quickRatio = rTTM.quickRatioTTM || null;
-
-  // Debt/Equity
-  let debtEquity = null;
-  if (rTTM.debtEquityRatioTTM != null) {
-    debtEquity = rTTM.debtEquityRatioTTM;
-  }
-
-  // EV/EBITDA
-  let evEbitda = null;
-  if (kTTM.enterpriseValueOverEBITDATTM != null) {
-    evEbitda = kTTM.enterpriseValueOverEBITDATTM;
-  }
-
-  // PE
-  let pe = null;
-  if (rTTM.peRatioTTM != null) {
-    pe = rTTM.peRatioTTM;
-  } else if (p.pe != null) {
-    pe = p.pe;
-  }
-
-  // PEG
-  let peg = null;
-  if (rTTM.pegRatioTTM != null) {
-    peg = rTTM.pegRatioTTM;
-  } else if (kTTM.pegRatioTTM != null) {
-    peg = kTTM.pegRatioTTM;
-  }
-
-  // Sector
-  let sector = p.sector || 'Unknown';
-  let industry = p.industry || '';
-  let companyName = p.companyName || ticker;
-  let price = p.price || null;
-  let mktCap = p.mktCap || null;
-
-  return {
-    ticker,
-    companyName,
-    sector,
-    industry,
-    price,
-    mktCap,
-    pe: pe != null ? parseFloat(pe.toFixed(2)) : null,
-    peg: peg != null ? parseFloat(peg.toFixed(2)) : null,
-    roe5: roe5 != null ? parseFloat(roe5.toFixed(2)) : null,
-    quickRatio: quickRatio != null ? parseFloat(quickRatio.toFixed(2)) : null,
-    debtEquity: debtEquity != null ? parseFloat(debtEquity.toFixed(2)) : null,
-    netMargin: netMargin != null ? parseFloat(netMargin.toFixed(2)) : null,
-    evEbitda: evEbitda != null ? parseFloat(evEbitda.toFixed(2)) : null,
-    interestCov: interestCov != null ? parseFloat(interestCov.toFixed(2)) : null,
-    revenueGrowth: revenueGrowth != null ? parseFloat(revenueGrowth.toFixed(2)) : null,
-    fcfYield: fcfYield != null ? parseFloat(fcfYield.toFixed(2)) : null,
-    payout: payout != null ? parseFloat(payout.toFixed(2)) : null
+  return{
+    ticker,name:ap.longBusinessSummary?((ap.companyOfficers||[{}])[0]?.name||ticker):ticker,
+    sector:ap.sector||'N/A',industry:ap.industry||'',
+    price:rv(sd.regularMarketPrice)||rv(fd.currentPrice),
+    mcap:rv(sd.marketCap),
+    pe,peg,roe5y:roe,qr,de:deNorm,nm,eveb,ic,rg,fcfy,po
   };
 }
 
-// ==========================================
-// Demo Data Generator
-// ==========================================
-function generateDemoData(tickers) {
-  const sectors = {
-    'AAPL': { sector: 'Technology', industry: 'Consumer Electronics', name: 'Apple Inc.' },
-    'MSFT': { sector: 'Technology', industry: 'Software', name: 'Microsoft Corp.' },
-    'GOOGL': { sector: 'Communication Services', industry: 'Internet Content', name: 'Alphabet Inc.' },
-    'AMZN': { sector: 'Consumer Cyclical', industry: 'Internet Retail', name: 'Amazon.com Inc.' },
-    'NVDA': { sector: 'Technology', industry: 'Semiconductors', name: 'NVIDIA Corp.' },
-    'META': { sector: 'Communication Services', industry: 'Internet Content', name: 'Meta Platforms' },
-    'TSLA': { sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', name: 'Tesla Inc.' },
-    'JPM': { sector: 'Financial Services', industry: 'Banks', name: 'JPMorgan Chase' },
-    'V': { sector: 'Financial Services', industry: 'Credit Services', name: 'Visa Inc.' },
-    'MA': { sector: 'Financial Services', industry: 'Credit Services', name: 'Mastercard Inc.' },
-    'JNJ': { sector: 'Healthcare', industry: 'Drug Manufacturers', name: 'Johnson & Johnson' },
-    'UNH': { sector: 'Healthcare', industry: 'Healthcare Plans', name: 'UnitedHealth Group' },
-    'PFE': { sector: 'Healthcare', industry: 'Drug Manufacturers', name: 'Pfizer Inc.' },
-    'ABBV': { sector: 'Healthcare', industry: 'Drug Manufacturers', name: 'AbbVie Inc.' },
-    'MRK': { sector: 'Healthcare', industry: 'Drug Manufacturers', name: 'Merck & Co.' },
-    'XOM': { sector: 'Energy', industry: 'Oil & Gas', name: 'Exxon Mobil' },
-    'CVX': { sector: 'Energy', industry: 'Oil & Gas', name: 'Chevron Corp.' },
-    'COP': { sector: 'Energy', industry: 'Oil & Gas', name: 'ConocoPhillips' },
-    'SLB': { sector: 'Energy', industry: 'Oil & Gas Services', name: 'Schlumberger' },
-    'EOG': { sector: 'Energy', industry: 'Oil & Gas E&P', name: 'EOG Resources' },
-    'BAC': { sector: 'Financial Services', industry: 'Banks', name: 'Bank of America' },
-    'GS': { sector: 'Financial Services', industry: 'Investment Banking', name: 'Goldman Sachs' },
-    'MS': { sector: 'Financial Services', industry: 'Investment Banking', name: 'Morgan Stanley' },
-    'WFC': { sector: 'Financial Services', industry: 'Banks', name: 'Wells Fargo' },
-    'DIS': { sector: 'Communication Services', industry: 'Entertainment', name: 'Walt Disney' },
-    'NFLX': { sector: 'Communication Services', industry: 'Entertainment', name: 'Netflix Inc.' },
-    'CMCSA': { sector: 'Communication Services', industry: 'Telecom', name: 'Comcast Corp.' },
-    'WBD': { sector: 'Communication Services', industry: 'Entertainment', name: 'Warner Bros.' },
-    'PARA': { sector: 'Communication Services', industry: 'Entertainment', name: 'Paramount Global' },
-    'F': { sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', name: 'Ford Motor' },
-    'GM': { sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', name: 'General Motors' },
-    'TM': { sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', name: 'Toyota Motor' },
-    'RIVN': { sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', name: 'Rivian Automotive' },
-    'PYPL': { sector: 'Financial Services', industry: 'Credit Services', name: 'PayPal Holdings' },
-    'SQ': { sector: 'Financial Services', industry: 'Credit Services', name: 'Block Inc.' },
-    'COIN': { sector: 'Financial Services', industry: 'Capital Markets', name: 'Coinbase Global' },
-    'AVGO': { sector: 'Technology', industry: 'Semiconductors', name: 'Broadcom Inc.' },
-    'AMD': { sector: 'Technology', industry: 'Semiconductors', name: 'AMD Inc.' },
-    'INTC': { sector: 'Technology', industry: 'Semiconductors', name: 'Intel Corp.' },
-    'QCOM': { sector: 'Technology', industry: 'Semiconductors', name: 'Qualcomm Inc.' },
-    'TXN': { sector: 'Technology', industry: 'Semiconductors', name: 'Texas Instruments' },
+function blank(t){return{ticker:t,name:t,sector:'N/A',industry:'',price:null,mcap:null,pe:null,peg:null,roe5y:null,qr:null,de:null,nm:null,eveb:null,ic:null,rg:null,fcfy:null,po:null}}
+
+// Color rules
+function col(m,v){
+  if(v===null||v===undefined||!isFinite(v))return{c:'',l:'N/A',s:''};
+  const R={
+    pe:{g:v=>v<=16,o:v=>v>16&&v<20,gl:'Attractif',ol:'Acceptable',rl:'Élevé'},
+    peg:{g:v=>v<=1,o:v=>v>1&&v<1.5,gl:'Qualité',ol:'Modéré',rl:'Surévalué'},
+    roe5y:{g:v=>v>=.15,o:v=>v>=.1&&v<.15,gl:'Excellent',ol:'Correct',rl:'Faible'},
+    qr:{g:v=>v>=1,o:v=>v>=.5&&v<1,gl:'Solide',ol:'Tendu',rl:'Risqué'},
+    de:{g:v=>v<=.5,o:v=>v>.5&&v<=1,gl:'Sain',ol:'Modéré',rl:'Endetté'},
+    nm:{g:v=>v>=.1,o:v=>v>=.05&&v<.1,gl:'Rentable',ol:'Modeste',rl:'Faible'},
+    eveb:{g:v=>v<=8,o:v=>v>8&&v<12,gl:'Attractif',ol:'Correct',rl:'Cher'},
+    ic:{g:v=>v>=5,o:v=>v>=3&&v<5,gl:'Confort.',ol:'Tendu',rl:'Risqué'},
+    rg:{g:v=>v>=.1,o:v=>v>=.05&&v<.1,gl:'Forte',ol:'Modérée',rl:'Faible'},
+    fcfy:{g:v=>v>=.08,o:v=>v>=.04&&v<.08,gl:'Attractif',ol:'Correct',rl:'Faible'},
+    po:{g:v=>v>=.2&&v<=.8,o:v=>(v>=0&&v<.2)||(v>.8&&v<=1),gl:'Souten.',ol:'Atypique',rl:'Insout.'},
   };
+  const r=R[m];if(!r)return{c:'',l:'',s:''};
+  if(r.g(v))return{c:'g',l:r.gl,s:'g'};
+  if(r.o(v))return{c:'o',l:r.ol,s:'o'};
+  return{c:'r',l:r.rl,s:'r'};
+}
 
-  const demoMetrics = {
-    'AAPL': { pe: 29.5, peg: 2.1, roe5: 147, quickRatio: 0.94, debtEquity: 1.87, netMargin: 25.3, evEbitda: 22.1, interestCov: 29.1, revenueGrowth: 4.9, fcfYield: 3.8, payout: 15.5 },
-    'MSFT': { pe: 32.8, peg: 2.0, roe5: 40.2, quickRatio: 1.53, debtEquity: 0.42, netMargin: 35.6, evEbitda: 24.3, interestCov: 36.5, revenueGrowth: 16.0, fcfYield: 2.9, payout: 25.1 },
-    'GOOGL': { pe: 21.5, peg: 1.1, roe5: 25.8, quickRatio: 2.07, debtEquity: 0.11, netMargin: 26.1, evEbitda: 15.2, interestCov: 82.3, revenueGrowth: 13.6, fcfYield: 4.5, payout: 0 },
-    'AMZN': { pe: 36.2, peg: 1.4, roe5: 17.5, quickRatio: 0.86, debtEquity: 0.63, netMargin: 7.8, evEbitda: 17.1, interestCov: 9.2, revenueGrowth: 12.5, fcfYield: 2.8, payout: 0 },
-    'NVDA': { pe: 55.3, peg: 0.9, roe5: 62.1, quickRatio: 3.57, debtEquity: 0.23, netMargin: 55.8, evEbitda: 48.2, interestCov: 132.0, revenueGrowth: 122.4, fcfYield: 1.9, payout: 1.3 },
-    'META': { pe: 23.1, peg: 1.0, roe5: 22.4, quickRatio: 2.65, debtEquity: 0.25, netMargin: 33.2, evEbitda: 14.8, interestCov: 45.2, revenueGrowth: 24.8, fcfYield: 3.7, payout: 0 },
-    'TSLA': { pe: 95.2, peg: 5.2, roe5: 18.3, quickRatio: 1.25, debtEquity: 0.18, netMargin: 7.2, evEbitda: 52.1, interestCov: 12.3, revenueGrowth: -0.5, fcfYield: 0.7, payout: 0 },
-    'JPM': { pe: 11.8, peg: 1.6, roe5: 15.2, quickRatio: 0.35, debtEquity: 1.52, netMargin: 32.1, evEbitda: null, interestCov: null, revenueGrowth: 9.8, fcfYield: 7.2, payout: 27 },
-    'V': { pe: 28.5, peg: 1.8, roe5: 42.5, quickRatio: 1.32, debtEquity: 0.85, netMargin: 52.1, evEbitda: 21.5, interestCov: 24.5, revenueGrowth: 10.2, fcfYield: 3.5, payout: 22 },
-    'MA': { pe: 33.2, peg: 1.9, roe5: 165, quickRatio: 1.18, debtEquity: 2.15, netMargin: 45.8, evEbitda: 25.1, interestCov: 15.8, revenueGrowth: 11.5, fcfYield: 2.8, payout: 20 },
-    'JNJ': { pe: 14.5, peg: 2.8, roe5: 22.3, quickRatio: 1.02, debtEquity: 0.48, netMargin: 18.5, evEbitda: 12.3, interestCov: 18.2, revenueGrowth: 3.2, fcfYield: 5.8, payout: 45 },
-    'UNH': { pe: 18.2, peg: 1.3, roe5: 24.8, quickRatio: 0.75, debtEquity: 0.72, netMargin: 6.2, evEbitda: 13.5, interestCov: 8.5, revenueGrowth: 13.2, fcfYield: 4.1, payout: 30 },
-    'PFE': { pe: 42.5, peg: null, roe5: 12.5, quickRatio: 1.08, debtEquity: 0.81, netMargin: 4.2, evEbitda: 18.2, interestCov: 4.8, revenueGrowth: -41.5, fcfYield: 8.5, payout: 120 },
-    'ABBV': { pe: 52.1, peg: 3.1, roe5: null, quickRatio: 0.72, debtEquity: 5.82, netMargin: 9.5, evEbitda: 15.2, interestCov: 5.2, revenueGrowth: -6.2, fcfYield: 5.1, payout: 185 },
-    'MRK': { pe: 18.5, peg: 1.8, roe5: 38.2, quickRatio: 0.95, debtEquity: 0.92, netMargin: 22.1, evEbitda: 12.8, interestCov: 12.5, revenueGrowth: 1.2, fcfYield: 4.8, payout: 48 },
-    'XOM': { pe: 12.3, peg: null, roe5: 18.5, quickRatio: 0.88, debtEquity: 0.22, netMargin: 10.8, evEbitda: 5.8, interestCov: 35.2, revenueGrowth: -3.2, fcfYield: 7.5, payout: 42 },
-    'CVX': { pe: 13.5, peg: null, roe5: 14.8, quickRatio: 0.95, debtEquity: 0.18, netMargin: 11.2, evEbitda: 5.2, interestCov: 42.1, revenueGrowth: -5.8, fcfYield: 6.8, payout: 55 },
-    'COP': { pe: 11.2, peg: null, roe5: 21.5, quickRatio: 1.15, debtEquity: 0.38, netMargin: 18.2, evEbitda: 4.8, interestCov: 28.5, revenueGrowth: -8.2, fcfYield: 9.2, payout: 32 },
-    'SLB': { pe: 14.2, peg: 1.2, roe5: 18.2, quickRatio: 1.05, debtEquity: 0.55, netMargin: 12.5, evEbitda: 8.5, interestCov: 10.2, revenueGrowth: 5.5, fcfYield: 5.8, payout: 28 },
-    'EOG': { pe: 9.8, peg: null, roe5: 25.2, quickRatio: 1.42, debtEquity: 0.15, netMargin: 23.5, evEbitda: 4.2, interestCov: 65.2, revenueGrowth: -2.8, fcfYield: 8.5, payout: 35 },
-    'BAC': { pe: 12.5, peg: 1.5, roe5: 10.8, quickRatio: 0.32, debtEquity: 1.08, netMargin: 26.5, evEbitda: null, interestCov: null, revenueGrowth: 3.5, fcfYield: 6.2, payout: 30 },
-    'GS': { pe: 14.8, peg: 1.1, roe5: 12.5, quickRatio: 0.42, debtEquity: 2.45, netMargin: 22.8, evEbitda: null, interestCov: null, revenueGrowth: 12.2, fcfYield: 8.5, payout: 25 },
-    'MS': { pe: 15.2, peg: 1.3, roe5: 12.8, quickRatio: 0.38, debtEquity: 2.82, netMargin: 18.5, evEbitda: null, interestCov: null, revenueGrowth: 8.5, fcfYield: 5.5, payout: 42 },
-    'WFC': { pe: 11.5, peg: 1.4, roe5: 9.8, quickRatio: 0.28, debtEquity: 1.22, netMargin: 24.2, evEbitda: null, interestCov: null, revenueGrowth: -2.5, fcfYield: 7.8, payout: 32 },
-    'DIS': { pe: 38.5, peg: 2.5, roe5: 4.2, quickRatio: 0.78, debtEquity: 0.48, netMargin: 5.8, evEbitda: 16.5, interestCov: 4.2, revenueGrowth: 3.8, fcfYield: 2.8, payout: 0 },
-    'NFLX': { pe: 42.1, peg: 1.5, roe5: 28.5, quickRatio: 1.12, debtEquity: 0.72, netMargin: 22.5, evEbitda: 28.2, interestCov: 12.5, revenueGrowth: 12.8, fcfYield: 2.1, payout: 0 },
-    'CMCSA': { pe: 10.2, peg: 1.5, roe5: 15.8, quickRatio: 0.58, debtEquity: 1.12, netMargin: 12.8, evEbitda: 7.2, interestCov: 5.8, revenueGrowth: -0.8, fcfYield: 8.2, payout: 35 },
-    'WBD': { pe: null, peg: null, roe5: -8.5, quickRatio: 0.65, debtEquity: 1.85, netMargin: -15.2, evEbitda: 8.5, interestCov: 2.1, revenueGrowth: -5.5, fcfYield: 12.5, payout: 0 },
-    'PARA': { pe: null, peg: null, roe5: -2.5, quickRatio: 0.82, debtEquity: 1.45, netMargin: -12.5, evEbitda: 12.2, interestCov: 2.8, revenueGrowth: -8.2, fcfYield: 15.2, payout: 0 },
-    'F': { pe: 11.2, peg: 2.5, roe5: 8.5, quickRatio: 0.95, debtEquity: 3.52, netMargin: 2.8, evEbitda: 12.5, interestCov: 3.2, revenueGrowth: 5.2, fcfYield: 9.5, payout: 52 },
-    'GM': { pe: 5.8, peg: 0.8, roe5: 12.2, quickRatio: 0.92, debtEquity: 1.85, netMargin: 5.5, evEbitda: 7.8, interestCov: 5.5, revenueGrowth: 4.8, fcfYield: 12.5, payout: 18 },
-    'TM': { pe: 8.5, peg: 1.2, roe5: 10.5, quickRatio: 0.98, debtEquity: 0.62, netMargin: 8.2, evEbitda: 8.2, interestCov: 18.5, revenueGrowth: 12.5, fcfYield: 6.8, payout: 28 },
-    'RIVN': { pe: null, peg: null, roe5: -85.2, quickRatio: 3.52, debtEquity: 1.25, netMargin: -95.2, evEbitda: null, interestCov: -8.5, revenueGrowth: 167.2, fcfYield: -15.2, payout: 0 },
-    'PYPL': { pe: 15.8, peg: 1.1, roe5: 18.5, quickRatio: 1.28, debtEquity: 0.52, netMargin: 14.2, evEbitda: 10.5, interestCov: 12.5, revenueGrowth: 8.2, fcfYield: 5.8, payout: 0 },
-    'SQ': { pe: 55.2, peg: 2.8, roe5: 2.5, quickRatio: 1.85, debtEquity: 0.72, netMargin: 3.5, evEbitda: 35.2, interestCov: 5.2, revenueGrowth: 22.5, fcfYield: 2.2, payout: 0 },
-    'COIN': { pe: 25.8, peg: null, roe5: 5.2, quickRatio: 1.52, debtEquity: 0.92, netMargin: 22.5, evEbitda: 15.8, interestCov: 8.2, revenueGrowth: 95.2, fcfYield: 4.5, payout: 0 },
-    'AVGO': { pe: 32.5, peg: 1.3, roe5: 35.2, quickRatio: 1.05, debtEquity: 1.02, netMargin: 28.5, evEbitda: 22.5, interestCov: 8.5, revenueGrowth: 44.2, fcfYield: 3.2, payout: 52 },
-    'AMD': { pe: 42.5, peg: 1.5, roe5: 5.8, quickRatio: 2.18, debtEquity: 0.05, netMargin: 8.5, evEbitda: 32.5, interestCov: 28.5, revenueGrowth: 10.2, fcfYield: 2.1, payout: 0 },
-    'INTC': { pe: null, peg: null, roe5: -2.8, quickRatio: 1.45, debtEquity: 0.48, netMargin: -16.5, evEbitda: 25.2, interestCov: -5.2, revenueGrowth: -15.8, fcfYield: -5.8, payout: 0 },
-    'QCOM': { pe: 16.5, peg: 1.2, roe5: 55.8, quickRatio: 1.82, debtEquity: 0.65, netMargin: 25.2, evEbitda: 11.8, interestCov: 15.2, revenueGrowth: 8.5, fcfYield: 5.2, payout: 35 },
-    'TXN': { pe: 28.5, peg: 3.5, roe5: 48.2, quickRatio: 3.52, debtEquity: 0.82, netMargin: 32.5, evEbitda: 20.2, interestCov: 12.5, revenueGrowth: -2.5, fcfYield: 2.8, payout: 65 },
+function fmt(m,v){
+  if(v===null||v===undefined||!isFinite(v))return'N/A';
+  if(['roe5y','nm','rg','fcfy','po'].includes(m))return(v*100).toFixed(1)+'%';
+  if(m==='ic')return v.toFixed(1)+'x';
+  return v.toFixed(2);
+}
+
+function sc(d){
+  const M=['pe','peg','roe5y','qr','de','nm','eveb','ic','rg','fcfy','po'];
+  let g=0,o=0,r=0;
+  M.forEach(m=>{const c=col(m,d[m]);if(c.s==='g')g++;else if(c.s==='o')o++;else if(c.s==='r')r++});
+  return{g,o,r};
+}
+
+function cat(s){if(s.g>=7&&s.r<=2)return'A';if(s.r>=4)return'C';return'B'}
+
+function scCls(s){if(s.g>=7)return'sg';if(s.r>=4)return'sr';return'so'}
+
+// Sector warnings
+const SW={
+  'Technology':'Sensible aux taux et rotations growth/value. Risque de compression des multiples.',
+  'Healthcare':'Risque réglementaire (FDA, pricing). Pipelines binaires. Brevets à surveiller.',
+  'Financial Services':'Cyclique, sensible à la courbe des taux et risque de crédit.',
+  'Energy':'Forte cyclicité pétrole/gaz. Transition énergétique = risque structurel.',
+  'Consumer Cyclical':'Lié aux cycles de consommation. Corrélé à la confiance consommateurs.',
+  'Communication Services':'Dépendance pub, compétition streaming. Coûts contenu croissants.',
+  'Industrials':'Cyclique, lié aux capex. Sensible aux supply chains.',
+  'Consumer Defensive':'Défensif, croissance limitée. Marges sous pression inflation.',
+  'Basic Materials':'Très cyclique. Commodités et intensité capitalistique.',
+  'Real Estate':'Sensible aux taux. Évaluer FFO plutôt que P/E.',
+  'Utilities':'Défensif, rendement dividende. Croissance limitée, régulation.',
+};
+
+function warn(s){return SW[s]||'Secteur à analyser spécifiquement.'}
+
+// RENDER
+function r1(dl){
+  const M=[{k:'pe',l:'P/E'},{k:'peg',l:'PEG'},{k:'roe5y',l:'ROE'},{k:'qr',l:'Quick R.'},{k:'de',l:'D/E'},{k:'nm',l:'Marge N.'},{k:'eveb',l:'EV/EBITDA'},{k:'ic',l:'Couv.Int.'},{k:'rg',l:'Croiss.CA'},{k:'fcfy',l:'FCF Yld'},{k:'po',l:'Payout'}];
+  let h=`<div class="sec-t"><span class="sn">1</span>Tableau des Ratios Clés</div><div class="tw"><table><thead><tr><th>Ticker</th><th>Secteur</th>${M.map(m=>`<th>${m.l}</th>`).join('')}<th>Score</th></tr></thead><tbody>`;
+  dl.forEach(d=>{
+    const s=sc(d),cls=scCls(s);
+    h+=`<tr><td class="tk">${d.ticker}</td><td class="sk">${d.sector}</td>`;
+    M.forEach(m=>{const c=col(m.k,d[m.k]);h+=`<td class="${c.s}"><span class="v">${fmt(m.k,d[m.k])}</span><span class="c">${c.l}</span></td>`});
+    h+=`<td><span class="sb ${cls}">${s.g}V/${s.o}O/${s.r}R</span></td></tr>`;
+  });
+  h+='</tbody></table></div>';
+  Q('s1').innerHTML=h;
+}
+
+function r2(dl){
+  const secs={};dl.forEach(d=>{const s=d.sector||'Autre';if(!secs[s])secs[s]=[];secs[s].push(d)});
+  let h=`<div class="sec-t"><span class="sn">2</span>Analyse par Secteur</div>`;
+  Object.entries(secs).forEach(([s,st])=>{
+    const ape=st.filter(x=>x.pe).reduce((a,x)=>a+x.pe,0)/(st.filter(x=>x.pe).length||1);
+    const amn=st.filter(x=>x.nm!=null).reduce((a,x)=>a+x.nm,0)/(st.filter(x=>x.nm!=null).length||1);
+    const best=st.reduce((b,x)=>(!b||(x.roe5y||0)>(b.roe5y||0))?x:b,null);
+    const pes=st.filter(x=>x.pe).map(x=>x.pe);
+    h+=`<div class="sb-blk"><div class="sb-n">🏷 ${s} (${st.map(x=>x.ticker).join(', ')})</div><div class="sb-c">
+    <p><strong>Dynamique :</strong> P/E moyen ${ape.toFixed(1)}x, marge nette moy. ${(amn*100).toFixed(1)}%. ${amn>.1?'Marges solides, business scalable.':amn>.05?'Marges correctes, pression concurrentielle possible.':'Marges serrées, sensible aux cycles.'}</p>
+    <p><strong>Position relative :</strong> ${best&&best.roe5y?best.ticker+' meilleur ROE ('+(best.roe5y*100).toFixed(1)+'%).':''} ${pes.length>1?'Dispersion P/E : '+Math.min(...pes).toFixed(1)+' à '+Math.max(...pes).toFixed(1)+'.':'Titre unique, comparer avec pairs.'}</p>
+    <p><strong>⚠️</strong> ${warn(s)}</p></div></div>`;
+  });
+  Q('s2').innerHTML=h;
+}
+
+function r3(dl){
+  let h=`<div class="sec-t"><span class="sn">3</span>Verdict Individuel</div><div class="grid">`;
+  dl.forEach(d=>{
+    const s=sc(d),ct=cat(s);
+    const sp=[],wp=[],rf=[];
+    if(d.roe5y!==null){if(d.roe5y>=.15)sp.push('ROE solide ('+(d.roe5y*100).toFixed(1)+'%)');else if(d.roe5y<.1)wp.push('ROE faible')}
+    if(d.nm!==null){if(d.nm>=.1)sp.push('marges élevées');else if(d.nm<.05)wp.push('marges faibles')}
+    if(d.de!==null){if(d.de<=.5)sp.push('bilan sain');else if(d.de>1){wp.push('endetté');rf.push('D/E>1')}}
+    if(d.ic!==null){if(d.ic>=5)sp.push('couverture confortable');else if(d.ic<3){wp.push('couverture fragile');rf.push('Couv.<3x')}}
+    if(d.pe!==null){if(d.pe<=16)sp.push('P/E attractif');else if(d.pe>=20)wp.push('P/E élevé')}
+    if(d.peg!==null&&d.peg>=1.5)rf.push('PEG≥1.5');
+    if(d.qr!==null&&d.qr<.5)rf.push('Quick<0.5');
+    if(d.po!==null&&d.po>1)rf.push('Payout>100%');
+    if(d.fcfy!==null&&d.fcfy>=.08)sp.push('FCF yield attractif');
+
+    const ccl=ct==='A'?'cc-a':ct==='B'?'cc-b':'cc-c';
+    const ctxt=ct==='A'?'Profil qualité attractive':ct==='B'?'Correct sans marge de sécurité':'Spéculatif / cyclique';
+    h+=`<div class="card"><div class="ch"><span class="ct">${d.ticker}</span><span class="cs">${d.sector}</span></div>
+    <div class="cb">
+    <p>✅ <span class="h">Fondamentaux :</span> ${sp.length?sp.join(', ')+'.':'Aucun point fort majeur identifié.'}</p>
+    <p>✅ <span class="h">Valorisation :</span> P/E ${d.pe?d.pe.toFixed(1):'N/A'}, PEG ${d.peg?d.peg.toFixed(2):'N/A'}, EV/EBITDA ${d.eveb?d.eveb.toFixed(1):'N/A'}.</p>
+    <p>✅ <span class="h">Vigilance :</span> ${wp.length?wp.join(', ')+'.':'RAS.'}</p>
+    <div class="cc ${ccl}"><strong>CONCLUSION :</strong> ${ctxt} — ${s.g}/11 Vert</div>
+    ${rf.length?`<div class="rf">🚩 ${rf.join(' • ')}</div>`:''}
+    </div></div>`;
+  });
+  h+='</div>';Q('s3').innerHTML=h;
+}
+
+function r4(dl){
+  const a=[],b=[],c=[];
+  dl.forEach(d=>{const s=sc(d);const ct=cat(s);({A:a,B:b,C:c})[ct].push({...d,_s:s})});
+  [a,b,c].forEach(x=>x.sort((a,b)=>b._s.g-a._s.g));
+  let h=`<div class="sec-t"><span class="sn">4</span>Classement Global</div>`;
+  const sec=(items,lbl,cls,icls)=>{
+    if(!items.length)return'';
+    return`<div class="rk"><div class="rl ${cls}">${lbl}</div>${items.map(d=>`<div class="ri ${icls}"><strong>${d.ticker}</strong><span>${d._s.g}V/${d._s.o}O/${d._s.r}R — ${sj(d)}</span></div>`).join('')}</div>`;
   };
+  h+=sec(a,'🟢 A. QUALITÉ — À PRIVILÉGIER','g','ri-a');
+  h+=sec(b,'🟠 B. NEUTRE — À SURVEILLER','o','ri-b');
+  h+=sec(c,'🔴 C. ÉVITER','r','ri-c');
+  Q('s4').innerHTML=h;
+}
 
-  return tickers.map(t => {
-    const ticker = t.toUpperCase();
-    const info = sectors[ticker] || { sector: 'Technology', industry: 'General', name: ticker };
-    const metrics = demoMetrics[ticker];
+function sj(d){
+  const p=[];
+  if(d.pe!==null){if(d.pe<=16)p.push('valorisation attractive');else if(d.pe>=25)p.push('valo tendue')}
+  if(d.roe5y!==null&&d.roe5y>=.15)p.push('ROE solide');
+  if(d.nm!==null&&d.nm>=.1)p.push('marges élevées');
+  if(d.de!==null&&d.de>1)p.push('endetté');
+  if(d.fcfy!==null&&d.fcfy>=.08)p.push('FCF yield');
+  return(p.length?p.slice(0,3).join(', '):'profil mixte')+'.';
+}
 
-    if (metrics) {
-      return { ticker, companyName: info.name, sector: info.sector, industry: info.industry, price: null, mktCap: null, ...metrics };
+function r5(dl){
+  const a=[],b=[],c=[];
+  dl.forEach(d=>{const ct=cat(sc(d));({A:a,B:b,C:c})[ct].push(d.ticker)});
+  const secs=[...new Set(dl.map(d=>d.sector))];
+  const avg=dl.reduce((s,d)=>s+sc(d).g,0)/dl.length;
+  let h=`<div class="sec-t"><span class="sn">5</span>Résumé Final</div><div class="st">
+  <p><strong>1. Recommandations :</strong> ${a.length?a.join(', ')+' — majorité Vert, meilleur profil risque/rendement.':'Aucun titre clairement « qualité attractive ».'} ${b.length?b.join(', ')+' à surveiller.':''}</p>
+  <p><strong>2. Risques :</strong> ${secs.length} secteur(s) (${secs.join(', ')}). Score moyen ${avg.toFixed(1)}/11 Vert. ${c.length?c.join(', ')+' présente(nt) ≥3 alertes rouges.':''} Risques : taux, rotation sectorielle, macro 2025.</p>
+  <p><strong>3. Allocation :</strong> ${a.length?'Cat. A ('+a.join(',')+') : 60-70%.':''} ${b.length?'Cat. B ('+b.join(',')+') : '+(a.length?'20-30':'70-80')+'%.':''} ${c.length?'Cat. C ('+c.join(',')+') : 0-10% max.':''} Diversifier et réévaluer trimestriellement.</p></div>`;
+  Q('s5').innerHTML=h;
+}
+
+// MAIN
+async function R(){
+  if(!T.length){Q('err').textContent='⚠️ Ajoutez au moins un ticker.';Q('err').classList.add('on');return}
+  Q('err').classList.remove('on');Q('ld').classList.add('on');Q('res').classList.remove('on');Q('ab').disabled=true;
+  D=[];
+  for(let i=0;i<T.length;i++){
+    Q('lt').textContent=`Récupération ${T[i]}... (${i+1}/${T.length})`;
+    Q('ls').textContent='Yahoo Finance via proxy CORS';
+    try{
+      const raw=await yf(T[i]);
+      D.push(proc(T[i],raw));
+    }catch(e){
+      console.error(T[i],e);
+      D.push(blank(T[i]));
     }
-
-    // Random fallback
-    return {
-      ticker,
-      companyName: info.name,
-      sector: info.sector,
-      industry: info.industry,
-      price: null,
-      mktCap: null,
-      pe: parseFloat((Math.random() * 40 + 5).toFixed(2)),
-      peg: parseFloat((Math.random() * 3 + 0.3).toFixed(2)),
-      roe5: parseFloat((Math.random() * 30 + 5).toFixed(2)),
-      quickRatio: parseFloat((Math.random() * 3 + 0.2).toFixed(2)),
-      debtEquity: parseFloat((Math.random() * 2).toFixed(2)),
-      netMargin: parseFloat((Math.random() * 25 + 2).toFixed(2)),
-      evEbitda: parseFloat((Math.random() * 25 + 3).toFixed(2)),
-      interestCov: parseFloat((Math.random() * 20 + 1).toFixed(2)),
-      revenueGrowth: parseFloat((Math.random() * 30 - 5).toFixed(2)),
-      fcfYield: parseFloat((Math.random() * 12 + 1).toFixed(2)),
-      payout: parseFloat((Math.random() * 80).toFixed(2))
-    };
-  });
+    if(i<T.length-1)await new Promise(r=>setTimeout(r,400));
+  }
+  r1(D);r2(D);r3(D);r4(D);r5(D);
+  Q('ld').classList.remove('on');Q('res').classList.add('on');Q('ab').disabled=false;
+  Q('res').scrollIntoView({behavior:'smooth'});
 }
 
-// ==========================================
-// Color Coding Logic
-// ==========================================
-function getColor(metric, value) {
-  if (value === null || value === undefined || isNaN(value)) return 'neutral';
-
-  switch (metric) {
-    case 'pe':
-      if (value <= 0) return 'red'; // Negative earnings
-      if (value <= THRESHOLDS.pe.green) return 'green';
-      if (value <= THRESHOLDS.pe.orange) return 'orange';
-      return 'red';
-
-    case 'peg':
-      if (value <= 0) return 'red';
-      if (value <= THRESHOLDS.peg.green) return 'green';
-      if (value <= THRESHOLDS.peg.orange) return 'orange';
-      return 'red';
-
-    case 'roe5':
-      if (value >= THRESHOLDS.roe5.green) return 'green';
-      if (value >= THRESHOLDS.roe5.orange) return 'orange';
-      return 'red';
-
-    case 'quickRatio':
-      if (value >= THRESHOLDS.quickRatio.green) return 'green';
-      if (value >= THRESHOLDS.quickRatio.orange) return 'orange';
-      return 'red';
-
-    case 'debtEquity':
-      if (value <= THRESHOLDS.debtEquity.green) return 'green';
-      if (value <= THRESHOLDS.debtEquity.orange) return 'orange';
-      return 'red';
-
-    case 'netMargin':
-      if (value >= THRESHOLDS.netMargin.green) return 'green';
-      if (value >= THRESHOLDS.netMargin.orange) return 'orange';
-      return 'red';
-
-    case 'evEbitda':
-      if (value <= 0) return 'red';
-      if (value <= THRESHOLDS.evEbitda.green) return 'green';
-      if (value <= THRESHOLDS.evEbitda.orange) return 'orange';
-      return 'red';
-
-    case 'interestCov':
-      if (value < 0) return 'red';
-      if (value >= THRESHOLDS.interestCov.green) return 'green';
-      if (value >= THRESHOLDS.interestCov.orange) return 'orange';
-      return 'red';
-
-    case 'revenueGrowth':
-      if (value >= THRESHOLDS.revenueGrowth.green) return 'green';
-      if (value >= THRESHOLDS.revenueGrowth.orange) return 'orange';
-      return 'red';
-
-    case 'fcfYield':
-      if (value >= THRESHOLDS.fcfYield.green) return 'green';
-      if (value >= THRESHOLDS.fcfYield.orange) return 'orange';
-      return 'red';
-
-    case 'payout':
-      if (value > 100) return 'red';
-      if (value >= THRESHOLDS.payout.greenLow && value <= THRESHOLDS.payout.greenHigh) return 'green';
-      return 'orange';
-
-    default:
-      return 'neutral';
-  }
+function CSV(){
+  if(!D.length)return;
+  const h='Ticker,Secteur,P/E,PEG,ROE,QuickR,D/E,MargeN,EV/EBITDA,Couv.Int,Croiss.CA,FCFYield,Payout,Vert,Orange,Rouge';
+  const rows=D.map(d=>{const s=sc(d);return[d.ticker,d.sector,fmt('pe',d.pe),fmt('peg',d.peg),fmt('roe5y',d.roe5y),fmt('qr',d.qr),fmt('de',d.de),fmt('nm',d.nm),fmt('eveb',d.eveb),fmt('ic',d.ic),fmt('rg',d.rg),fmt('fcfy',d.fcfy),fmt('po',d.po),s.g,s.o,s.r].join(',')});
+  const b=new Blob(['\uFEFF'+h+'\n'+rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`analyse_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 }
-
-function getColorClass(color) {
-  if (color === 'green') return 'cell-green';
-  if (color === 'orange') return 'cell-orange';
-  if (color === 'red') return 'cell-red';
-  return '';
-}
-
-function getTooltip(metric, value, color) {
-  const labels = {
-    pe: { green: 'Valorisation attractive', orange: 'Valorisation acceptable', red: 'Valorisation élevée' },
-    peg: { green: 'Croissance bien valorisée', orange: 'PEG modéré', red: 'Survalorisé vs croissance' },
-    roe5: { green: 'Excellente rentabilité', orange: 'Rentabilité correcte', red: 'Rentabilité insuffisante' },
-    quickRatio: { green: 'Liquidité solide', orange: 'Liquidité correcte', red: 'Liquidité tendue' },
-    debtEquity: { green: 'Endettement faible', orange: 'Endettement modéré', red: 'Endettement élevé' },
-    netMargin: { green: 'Marge excellente', orange: 'Marge correcte', red: 'Marge insuffisante' },
-    evEbitda: { green: 'Valorisation attractive', orange: 'Valorisation modérée', red: 'Valorisation élevée' },
-    interestCov: { green: 'Couverture solide', orange: 'Couverture correcte', red: 'Couverture fragile' },
-    revenueGrowth: { green: 'Croissance forte', orange: 'Croissance modérée', red: 'Croissance faible' },
-    fcfYield: { green: 'Cash flow attractif', orange: 'Cash flow correct', red: 'Cash flow faible' },
-    payout: { green: 'Dividende soutenable', orange: 'Payout atypique', red: 'Dividende non soutenable' }
-  };
-  return labels[metric] ? labels[metric][color] || '' : '';
-}
-
-function computeScore(stock) {
-  const metrics = ['pe', 'peg', 'roe5', 'quickRatio', 'debtEquity', 'netMargin', 'evEbitda', 'interestCov', 'revenueGrowth', 'fcfYield', 'payout'];
-  let green = 0, orange = 0, red = 0;
-
-  metrics.forEach(m => {
-    const val = stock[m];
-    if (val === null || val === undefined || isNaN(val)) {
-      // Count N/A as neutral (orange)
-      orange++;
-      return;
-    }
-    const color = getColor(m, val);
-    if (color === 'green') green++;
-    else if (color === 'orange') orange++;
-    else red++;
-  });
-
-  return { green, orange, red, total: 11 };
-}
-
-// ==========================================
-// Render Functions
-// ==========================================
-function formatValue(metric, value) {
-  if (value === null || value === undefined || isNaN(value)) return 'N/A';
-
-  switch (metric) {
-    case 'pe':
-    case 'peg':
-    case 'quickRatio':
-    case 'debtEquity':
-    case 'evEbitda':
-      return value.toFixed(1);
-    case 'roe5':
-    case 'netMargin':
-    case 'revenueGrowth':
-    case 'fcfYield':
-    case 'payout':
-      return value.toFixed(1) + '%';
-    case 'interestCov':
-      return value.toFixed(1) + 'x';
-    default:
-      return value.toString();
-  }
-}
-
-function renderRatiosTable(stocks) {
-  const tbody = document.getElementById('ratiosBody');
-  tbody.innerHTML = '';
-
-  stocks.forEach(stock => {
-    const score = computeScore(stock);
-    const scoreClass = score.green >= 7 ? 'score-high' : (score.green >= 4 ? 'score-mid' : 'score-low');
-
-    const metrics = ['pe', 'peg', 'roe5', 'quickRatio', 'debtEquity', 'netMargin', 'evEbitda', 'interestCov', 'revenueGrowth', 'fcfYield', 'payout'];
-
-    let row = `<tr>
-      <td>
-        <div class="cell-ticker">
-          <div>
-            <div class="ticker-symbol">${stock.ticker}</div>
-            <div class="ticker-sector">${stock.sector}</div>
-          </div>
-        </div>
-      </td>`;
-
-    metrics.forEach(m => {
-      const val = stock[m];
-      const color = (val !== null && val !== undefined && !isNaN(val)) ? getColor(m, val) : 'neutral';
-      const colorClass = getColorClass(color);
-      const tooltip = getTooltip(m, val, color);
-      const formatted = formatValue(m, val);
-
-      row += `<td><span class="cell-value ${colorClass}" data-tooltip="${tooltip}">${formatted}</span></td>`;
-    });
-
-    row += `<td><span class="score-badge ${scoreClass}">${score.green}V/${score.orange}O/${score.red}R</span></td>`;
-    row += '</tr>';
-
-    tbody.innerHTML += row;
-  });
-}
-
-function renderSectorAnalysis(stocks) {
-  const container = document.getElementById('sectorAnalysis');
-  container.innerHTML = '';
-
-  // Group by sector
-  const sectors = {};
-  stocks.forEach(s => {
-    if (!sectors[s.sector]) sectors[s.sector] = [];
-    sectors[s.sector].push(s);
-  });
-
-  Object.entries(sectors).forEach(([sector, sectorStocks]) => {
-    const sectorInfo = SECTOR_DESCRIPTIONS[sector] || { emoji: '📈', dynamics: 'Secteur diversifié avec des dynamiques variées selon les sous-industries.' };
-
-    const stockComparisons = sectorStocks.map(s => {
-      const score = computeScore(s);
-      return `<strong>${s.ticker}</strong> (${score.green}V/${score.orange}O/${score.red}R)`;
-    }).join(', ');
-
-    // Find best/worst
-    const sorted = [...sectorStocks].sort((a, b) => computeScore(b).green - computeScore(a).green);
-    const best = sorted[0];
-    const worst = sorted[sorted.length - 1];
-
-    let comparison = '';
-    if (sectorStocks.length > 1) {
-      comparison = ` Dans ce panier, <strong>${best.ticker}</strong> affiche le meilleur profil fondamental.`;
-      if (worst.ticker !== best.ticker) {
-        comparison += ` <strong>${worst.ticker}</strong> présente le plus de faiblesses.`;
-      }
-    }
-
-    // Warnings
-    let warnings = '';
-    const isCyclical = ['Energy', 'Consumer Cyclical', 'Basic Materials', 'Financial Services'].includes(sector);
-    if (isCyclical) {
-      warnings = ` ⚠️ <em>Secteur cyclique : les ratios actuels peuvent ne pas refléter les conditions en bas de cycle.</em>`;
-    }
-
-    const block = document.createElement('div');
-    block.className = 'sector-block';
-    block.innerHTML = `
-      <div class="sector-name">${sectorInfo.emoji} ${sector}</div>
-      <div class="sector-text">
-        ${sectorInfo.dynamics}<br><br>
-        <strong>Titres analysés :</strong> ${stockComparisons}.${comparison}${warnings}
-      </div>
-    `;
-    container.appendChild(block);
-  });
-}
-
-function renderVerdicts(stocks) {
-  const grid = document.getElementById('verdictGrid');
-  grid.innerHTML = '';
-
-  stocks.forEach(stock => {
-    const score = computeScore(stock);
-    const category = getCategory(stock, score);
-
-    const card = document.createElement('div');
-    card.className = `verdict-card ${category.class}`;
-
-    // Build analysis text
-    const strengths = [];
-    const weaknesses = [];
-
-    const metricLabels = {
-      pe: 'P/E', peg: 'PEG', roe5: 'ROE', quickRatio: 'Liquidité',
-      debtEquity: 'Endettement', netMargin: 'Marge nette', evEbitda: 'EV/EBITDA',
-      interestCov: 'Couverture intérêts', revenueGrowth: 'Croissance CA',
-      fcfYield: 'FCF Yield', payout: 'Payout'
-    };
-
-    Object.keys(metricLabels).forEach(m => {
-      const val = stock[m];
-      if (val === null || val === undefined || isNaN(val)) return;
-      const color = getColor(m, val);
-      if (color === 'green') strengths.push(metricLabels[m]);
-      else if (color === 'red') weaknesses.push(metricLabels[m]);
-    });
-
-    let verdictText = '';
-
-    // Quality assessment
-    const hasGoodROE = stock.roe5 !== null && stock.roe5 >= 15;
-    const hasGoodMargin = stock.netMargin !== null && stock.netMargin >= 10;
-    const hasLowDebt = stock.debtEquity !== null && stock.debtEquity <= 0.5;
-    const hasGoodCoverage = stock.interestCov !== null && stock.interestCov >= 5;
-
-    if (hasGoodROE && hasGoodMargin) {
-      verdictText += `${stock.ticker} affiche une qualité fondamentale solide avec un ROE de ${stock.roe5?.toFixed(1)}% et une marge nette de ${stock.netMargin?.toFixed(1)}%. `;
-    } else if (hasGoodROE || hasGoodMargin) {
-      verdictText += `${stock.ticker} présente des fondamentaux corrects mais inégaux. `;
-    } else {
-      verdictText += `${stock.ticker} affiche des fondamentaux fragiles nécessitant une vigilance accrue. `;
-    }
-
-    // Valuation assessment
-    const isValueOK = stock.pe !== null && stock.pe > 0 && stock.pe <= 20;
-    const isPEGOK = stock.peg !== null && stock.peg > 0 && stock.peg <= 1.5;
-
-    if (isValueOK) {
-      verdictText += `La valorisation reste raisonnable (P/E ${stock.pe?.toFixed(1)}). `;
-    } else if (stock.pe !== null && stock.pe > 30) {
-      verdictText += `La valorisation est tendue avec un P/E de ${stock.pe?.toFixed(1)}, intégrant déjà beaucoup d'optimisme. `;
-    }
-
-    // Balance sheet
-    if (hasLowDebt && hasGoodCoverage) {
-      verdictText += `Le bilan est solide avec un endettement maîtrisé. `;
-    } else if (stock.debtEquity > 1.5) {
-      verdictText += `L'endettement élevé (D/E ${stock.debtEquity?.toFixed(1)}) constitue un point de vigilance majeur. `;
-    }
-
-    verdictText += `Conclusion : <strong>${category.label}</strong>.`;
-
-    // Flags
-    let flagsHTML = '';
-    strengths.slice(0, 4).forEach(s => {
-      flagsHTML += `<span class="flag flag-green">✓ ${s}</span>`;
-    });
-    weaknesses.slice(0, 4).forEach(w => {
-      flagsHTML += `<span class="flag flag-red">✗ ${w}</span>`;
-    });
-
-    card.innerHTML = `
-      <div class="verdict-header">
-        <div>
-          <div class="verdict-ticker">${stock.ticker}</div>
-          <span style="font-size:0.82em;color:var(--text-muted)">${stock.companyName || ''}</span>
-        </div>
-        <span class="verdict-label ${category.labelClass}">${category.label}</span>
-      </div>
-      <div class="verdict-text">${verdictText}</div>
-      <div style="margin-bottom:10px;font-size:0.85em;color:var(--text-secondary)">
-        <strong>Score :</strong> ${score.green}/11 critères Vert ${weaknesses.length > 0 ? '| <span style="color:var(--red)">🚩 ' + weaknesses.join(', ') + '</span>' : '| ✅ Aucun drapeau rouge'}
-      </div>
-      <div class="verdict-flags">${flagsHTML}</div>
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
-function getCategory(stock, score) {
-  // A: majority green, reasonable valuation
-  // B: some weaknesses
-  // C: 3+ reds, fragile balance sheet, overvalued
-
-  if (score.red >= 4) {
-    return { class: 'avoid', label: 'Spéculatif/Cyclique', labelClass: 'label-avoid', rank: 'C' };
-  }
-  if (score.green >= 6 && score.red <= 2) {
-    return { class: 'quality', label: 'Profil qualité attractive', labelClass: 'label-quality', rank: 'A' };
-  }
-  if (score.green >= 4) {
-    return { class: 'neutral', label: 'Correct sans marge de sécurité', labelClass: 'label-neutral', rank: 'B' };
-  }
-  if (score.red >= 3) {
-    return { class: 'avoid', label: 'Spéculatif/Cyclique', labelClass: 'label-avoid', rank: 'C' };
-  }
-  return { class: 'neutral', label: 'Correct sans marge de sécurité', labelClass: 'label-neutral', rank: 'B' };
-}
-
-function renderRanking(stocks) {
-  const container = document.getElementById('rankingSection');
-  container.innerHTML = '';
-
-  // Sort and categorize
-  const scored = stocks.map(s => ({
-    ...s,
-    score: computeScore(s),
-    category: getCategory(s, computeScore(s))
-  }));
-
-  const catA = scored.filter(s => s.category.rank === 'A').sort((a, b) => b.score.green - a.score.green);
-  const catB = scored.filter(s => s.category.rank === 'B').sort((a, b) => b.score.green - a.score.green);
-  const catC = scored.filter(s => s.category.rank === 'C').sort((a, b) => a.score.red - b.score.red);
-
-  function buildRankingHTML(title, titleClass, items, rankColors) {
-    if (items.length === 0) return '';
-    let html = `<div class="ranking-category">
-      <div class="ranking-title ${titleClass}">${title}</div>`;
-
-    items.forEach((item, idx) => {
-      const rankClass = rankColors[idx] || 'rank-normal';
-      const reason = generateRankingReason(item);
-      html += `
-        <div class="ranking-item">
-          <div class="rank-number ${rankClass}">${idx + 1}</div>
-          <div class="rank-ticker">${item.ticker}</div>
-          <div class="rank-reason">${reason}</div>
-          <span class="score-badge ${item.score.green >= 7 ? 'score-high' : (item.score.green >= 4 ? 'score-mid' : 'score-low')}">${item.score.green}V/${item.score.orange}O/${item.score.red}R</span>
-        </div>`;
-    });
-
-    html += '</div>';
-    return html;
-  }
-
-  container.innerHTML =
-    buildRankingHTML('🅰️ QUALITÉ — À PRIVILÉGIER', 'cat-a', catA, ['rank-gold', 'rank-silver', 'rank-bronze']) +
-    buildRankingHTML('🅱️ NEUTRE — À SURVEILLER', 'cat-b', catB, ['rank-normal']) +
-    buildRankingHTML('🅲 ÉVITER', 'cat-c', catC, ['rank-normal']);
-
-  if (catA.length === 0 && catB.length === 0 && catC.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-muted);">Aucune donnée disponible pour le classement.</p>';
-  }
-}
-
-function generateRankingReason(stock) {
-  const strengths = [];
-  const weaknesses = [];
-
-  if (stock.roe5 >= 15) strengths.push('ROE solide');
-  if (stock.netMargin >= 10) strengths.push('marges élevées');
-  if (stock.debtEquity !== null && stock.debtEquity <= 0.5) strengths.push('bilan sain');
-  if (stock.pe !== null && stock.pe > 0 && stock.pe <= 16) strengths.push('valorisation attractive');
-  if (stock.fcfYield !== null && stock.fcfYield >= 8) strengths.push('FCF yield élevé');
-  if (stock.revenueGrowth >= 10) strengths.push('forte croissance');
-
-  if (stock.pe !== null && stock.pe > 30) weaknesses.push('P/E élevé');
-  if (stock.debtEquity > 1.0) weaknesses.push('endettement important');
-  if (stock.netMargin !== null && stock.netMargin < 5) weaknesses.push('marges faibles');
-  if (stock.payout > 100) weaknesses.push('payout non soutenable');
-
-  let reason = '';
-  if (strengths.length > 0) reason += strengths.slice(0, 3).join(', ');
-  if (weaknesses.length > 0) {
-    if (reason) reason += ' ; ';
-    reason += '⚠️ ' + weaknesses.slice(0, 2).join(', ');
-  }
-
-  return reason || 'Profil mixte';
-}
-
-function renderSummary(stocks) {
-  const container = document.getElementById('summaryText');
-
-  const scored = stocks.map(s => ({
-    ...s,
-    score: computeScore(s),
-    category: getCategory(s, computeScore(s))
-  }));
-
-  const catA = scored.filter(s => s.category.rank === 'A');
-  const catB = scored.filter(s => s.category.rank === 'B');
-  const catC = scored.filter(s => s.category.rank === 'C');
-
-  // Recommended
-  let p1 = '<strong>📌 Actions recommandées :</strong> ';
-  if (catA.length > 0) {
-    p1 += catA.map(s => s.ticker).join(', ') + ' se distinguent par la solidité de leurs fondamentaux. ';
-    const sectors = [...new Set(catA.map(s => s.sector))];
-    p1 += `Secteurs porteurs : ${sectors.join(', ')}. Ces titres combinent qualité du bilan, rentabilité élevée et génération de cash-flow.`;
-  } else {
-    p1 += 'Aucune action du panier ne présente un profil fondamental pleinement attractif selon nos critères stricts. Les positions doivent être calibrées avec prudence.';
-  }
-
-  // Risks
-  let p2 = '<strong>⚠️ Risques du panier :</strong> ';
-  const allSectors = [...new Set(stocks.map(s => s.sector))];
-  const cyclicals = allSectors.filter(s => ['Energy', 'Consumer Cyclical', 'Basic Materials', 'Financial Services'].includes(s));
-  const avgPE = stocks.filter(s => s.pe > 0).reduce((sum, s) => sum + s.pe, 0) / (stocks.filter(s => s.pe > 0).length || 1);
-
-  if (cyclicals.length > 0) {
-    p2 += `Exposition cyclique via ${cyclicals.join(', ')}. `;
-  }
-  if (avgPE > 25) {
-    p2 += `Valorisation moyenne élevée du panier (P/E moyen ~${avgPE.toFixed(0)}), sensible aux taux d'intérêt. `;
-  }
-  p2 += `${catC.length > 0 ? catC.map(s => s.ticker).join(', ') + ' présentent des drapeaux rouges significatifs.' : 'Pas de risque majeur identifié sur le bilan des titres du panier.'}`;
-
-  // Allocation
-  let p3 = '<strong>💼 Logique d\'allocation suggérée :</strong> ';
-  if (catA.length > 0) {
-    p3 += `Surpondérer les valeurs de catégorie A (${catA.map(s => s.ticker).join(', ')}) avec 60-70% du poids. `;
-  }
-  if (catB.length > 0) {
-    p3 += `Position modérée sur les valeurs neutres (${catB.map(s => s.ticker).join(', ')}) avec 20-30%. `;
-  }
-  if (catC.length > 0) {
-    p3 += `Réduire ou éviter les valeurs de catégorie C (${catC.map(s => s.ticker).join(', ')}). `;
-  }
-  p3 += 'Réévaluation recommandée trimestriellement avec les publications de résultats.';
-
-  container.innerHTML = `<p>${p1}</p><p>${p2}</p><p>${p3}</p>`;
-}
-
-// ==========================================
-// Main Analysis Flow
-// ==========================================
-async function startAnalysis() {
-  const input = document.getElementById('tickerInput').value.trim();
-  if (!input) {
-    showError('Veuillez entrer au moins un symbole boursier.');
-    return;
-  }
-
-  const tickers = input.split(',').map(t => t.trim().toUpperCase()).filter(t => t.length > 0);
-  if (tickers.length === 0) {
-    showError('Veuillez entrer des symboles valides.');
-    return;
-  }
-
-  // Remove exchange prefix if present (e.g., NASDAQ:AAPL -> AAPL)
-  const cleanTickers = tickers.map(t => {
-    if (t.includes(':')) return t.split(':')[1];
-    return t;
-  });
-
-  hideError();
-  const btn = document.getElementById('analyzeBtn');
-  btn.classList.add('loading');
-  btn.disabled = true;
-
-  const progress = document.getElementById('progressContainer');
-  progress.style.display = 'block';
-
-  document.getElementById('resultsContainer').style.display = 'none';
-
-  try {
-    let stocks;
-
-    if (currentMode === 'demo') {
-      // Demo mode
-      for (let i = 0; i < cleanTickers.length; i++) {
-        updateProgress((i + 1) / cleanTickers.length * 100, `Simulation ${cleanTickers[i]}...`);
-        await sleep(300);
-      }
-      stocks = generateDemoData(cleanTickers);
-    } else {
-      // API mode
-      const apiKey = getApiKey();
-      if (!apiKey) {
-        showError('Clé API FMP requise. Ouvrez la section Configuration API pour entrer votre clé, ou utilisez le Mode Démo.');
-        btn.classList.remove('loading');
-        btn.disabled = false;
-        progress.style.display = 'none';
-        return;
-      }
-
-      stocks = [];
-      for (let i = 0; i < cleanTickers.length; i++) {
-        const ticker = cleanTickers[i];
-        updateProgress((i / cleanTickers.length) * 100, `Récupération ${ticker}... (${i + 1}/${cleanTickers.length})`);
-
-        try {
-          const rawData = await fetchStockData(ticker, apiKey, (msg) => {
-            updateProgress(((i + 0.5) / cleanTickers.length) * 100, msg);
-          });
-          const metrics = extractMetrics(ticker, rawData);
-          stocks.push(metrics);
-        } catch (err) {
-          console.error(`Error fetching ${ticker}:`, err);
-          // Add placeholder
-          stocks.push({
-            ticker, companyName: ticker, sector: 'Unknown', industry: '',
-            price: null, mktCap: null,
-            pe: null, peg: null, roe5: null, quickRatio: null,
-            debtEquity: null, netMargin: null, evEbitda: null,
-            interestCov: null, revenueGrowth: null, fcfYield: null, payout: null
-          });
-        }
-
-        updateProgress(((i + 1) / cleanTickers.length) * 100, `${ticker} ✓`);
-
-        // Rate limiting
-        if (i < cleanTickers.length - 1) await sleep(500);
-      }
-    }
-
-    analysisData = stocks;
-
-    updateProgress(100, 'Génération du rapport...');
-    await sleep(500);
-
-    // Render all sections
-    renderRatiosTable(stocks);
-    renderSectorAnalysis(stocks);
-    renderVerdicts(stocks);
-    renderRanking(stocks);
-    renderSummary(stocks);
-
-    // Date
-    const now = new Date();
-    document.getElementById('analysisDate').textContent = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-    document.getElementById('timestamp').textContent = `Analyse générée le ${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR')} | ${currentMode === 'demo' ? '🎭 Mode démonstration' : '📡 Données API FMP'} | ${stocks.length} titres analysés`;
-
-    document.getElementById('sourceInfoText').innerHTML = `Données TTM / dernier exercice disponible — Source : ${currentMode === 'demo' ? 'Données simulées (démonstration)' : 'Financial Modeling Prep API (SEC filings, données temps réel)'}. Analyse générée le <span>${now.toLocaleDateString('fr-FR')}</span>. Seuils basés sur les critères d'analyse fondamentale standard.`;
-
-    // Show results
-    document.getElementById('resultsContainer').style.display = 'block';
-    progress.style.display = 'none';
-
-    // Scroll to results
-    document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  } catch (err) {
-    showError(`Erreur lors de l'analyse : ${err.message}`);
-    console.error(err);
-  }
-
-  btn.classList.remove('loading');
-  btn.disabled = false;
-}
-
-function updateProgress(percent, text) {
-  document.getElementById('progressBar').style.width = percent + '%';
-  document.getElementById('progressText').textContent = text || '';
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorMsg');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function hideError() {
-  document.getElementById('errorMsg').style.display = 'none';
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Allow Enter key to trigger analysis
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('tickerInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') startAnalysis();
-  });
-});
 </script>
 </body>
 </html>
+
 
 
