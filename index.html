@@ -3,73 +3,203 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Analyse fondamentale — Multi-tickers (GitHub Pages)</title>
+  <title>Multi-actions — TradingView + Analyse fondamentale (seuils)</title>
   <style>
-    :root{--bg:#0b1220;--card:#0f1b33;--border:#233357;--text:#e7eefc;--muted:#a9b7d6;--accent:#1a3a6b;
-      --g:#19c37d;--o:#f59e0b;--r:#ef4444;--link:#8ab4ff;}
-    body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);margin:0}
-    .wrap{max-width:1300px;margin:22px auto;padding:0 14px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}
+    :root{
+      --bg:#0b1220; --panel:#0f1b33; --text:#e7eefc; --muted:#a9b7d6;
+      --border:#233357; --accent:#1a3a6b; --link:#8ab4ff;
+      --g:#19c37d; --o:#f59e0b; --r:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, Segoe UI, Arial, sans-serif;
+    }
+    body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans)}
+    .wrap{max-width:1350px;margin:20px auto;padding:0 14px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}
     h1{font-size:18px;margin:0 0 10px}
     h2{font-size:14px;margin:0 0 10px;color:var(--muted)}
-    input,button{background:#0b1730;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
-    input{min-width:320px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input,button,select,textarea{background:#0b1730;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+    input,select{font-family:var(--mono)}
+    textarea{width:100%;min-height:76px;font-family:var(--mono)}
     button{cursor:pointer;background:var(--accent);font-weight:650}
     button:hover{background:#234a86}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .hint{font-size:12px;color:var(--muted);line-height:1.4}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-    .field{display:flex;flex-direction:column;gap:6px;background:#0b1730;border:1px solid #1e2d4a;border-radius:10px;padding:10px}
-    label{font-size:12px;color:var(--muted)}
     a{color:var(--link);text-decoration:none}
     a:hover{text-decoration:underline}
-    pre{white-space:pre-wrap;word-break:break-word;background:#0b1730;border:1px solid var(--border);border-radius:12px;padding:12px;margin:0}
-    .tickerHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-    .tickerTitle{font-weight:800;color:var(--link)}
-    .links a{font-size:12px;border:1px solid var(--border);padding:4px 8px;border-radius:999px;margin-right:6px}
-    .pill{display:inline-block;font-size:12px;color:var(--muted);border:1px solid var(--border);padding:2px 8px;border-radius:999px}
+    .hint{font-size:12px;color:var(--muted);line-height:1.4}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+    .field{background:#0b1730;border:1px solid #1e2d4a;border-radius:12px;padding:10px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .tv{height:520px}
+    pre{white-space:pre-wrap;word-break:break-word;background:#0b1730;border:1px solid var(--border);border-radius:12px;padding:12px;margin:0;font-family:var(--mono);font-size:12.5px}
+    .badge{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted)}
+    .g{color:var(--g);font-weight:800}
+    .o{color:var(--o);font-weight:800}
+    .r{color:var(--r);font-weight:800}
+    .sticky{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:3}
+    .split{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 980px){ .split{grid-template-columns:1.1fr .9fr;} }
+    .miniBtn{padding:8px 10px;font-size:13px}
   </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card">
-    <h1>Analyse fondamentale complète — Générateur Markdown (sans API)</h1>
-    <div class="hint">
-      GitHub Pages ne peut pas récupérer automatiquement les chiffres. Vous collez les valeurs (TTM/dernier exercice) depuis les sources,
-      et la page calcule les couleurs + score + génère le Markdown.
+
+  <div class="sticky">
+    <div class="row">
+      <div style="font-weight:800">Multi-actions — TradingView + Analyse (seuils Vert/Orange/Rouge)</div>
+      <div style="flex:1"></div>
+      <button id="genAll">Générer Markdown (tous)</button>
+      <button id="copy">Copier Markdown</button>
     </div>
   </div>
 
   <div class="card">
-    <h2>1) Tickers à analyser</h2>
+    <h1>1) Liste de tickers (multi-actions)</h1>
+    <div class="hint">
+      Entrez une liste séparée par virgules. Formats acceptés : <span class="badge">AAPL</span> ou <span class="badge">NASDAQ:AAPL</span>.
+      <br>Ensuite, choisissez un ticker dans la liste déroulante pour afficher le graphique TradingView et remplir les ratios de CE ticker.
+    </div>
+    <div class="row" style="margin-top:10px">
+      <textarea id="tickersInput">NASDAQ:NVDA, NASDAQ:AAPL, NASDAQ:GOOG, NASDAQ:MSFT, NASDAQ:AMZN</textarea>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="apply">Appliquer la liste</button>
+      <span class="badge">GitHub Pages: OK (sans API)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h1>2) Sélection de l’action (un seul TradingView)</h1>
     <div class="row">
-      <input id="tickers" value="NVDA, AAPL, GOOG, MSFT, AMZN" placeholder="Ex: TSLA, META, AMD" />
-      <button id="make">Créer les formulaires</button>
-      <button id="gen">Générer le rapport Markdown</button>
-      <button id="copy">Copier le Markdown</button>
+      <label class="badge" style="border-style:dashed">Ticker actif</label>
+      <select id="tickerSelect"></select>
+      <button id="loadTv" class="miniBtn">Charger TradingView</button>
+      <button id="openLinks" class="miniBtn">Ouvrir sources</button>
+      <span id="activeInfo" class="badge">—</span>
     </div>
     <div class="hint" style="margin-top:8px">
-      Sources rapides :
-      <a target="_blank" href="https://stockanalysis.com/">StockAnalysis</a> |
-      <a target="_blank" href="https://finance.yahoo.com/">Yahoo Finance</a> |
-      <a target="_blank" href="https://www.marketbeat.com/">MarketBeat</a>
-      <br>Format accepté dans les cases : <span class="pill">12.5</span> <span class="pill">12,5</span> <span class="pill">25%</span> <span class="pill">8x</span>
+      Les ratios restent enregistrés dans votre navigateur (localStorage) pour chaque ticker.
     </div>
   </div>
 
   <div class="card">
-    <h2>2) Coller les données (valeurs + URLs)</h2>
-    <div id="forms" class="hint">Cliquez “Créer les formulaires”.</div>
+    <h2>Graphique TradingView (ticker actif)</h2>
+    <div id="tv" class="tv"></div>
   </div>
 
   <div class="card">
-    <h2>3) Rapport Markdown</h2>
-    <pre id="out">—</pre>
+    <h1>3) Ratios + URLs (pour le ticker actif)</h1>
+
+    <div class="split">
+      <div>
+        <div class="grid">
+          <div class="field">
+            <label>Secteur / Industrie</label>
+            <input id="sector" placeholder="Ex: Technology / Semiconductors" />
+          </div>
+
+          <div class="field"><label>P/E — Valeur</label><input id="pe" placeholder="Ex: 18.7" /></div>
+          <div class="field"><label>P/E — URL source</label><input id="pe_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>PEG — Valeur</label><input id="peg" placeholder="Ex: 1.4" /></div>
+          <div class="field"><label>PEG — URL source</label><input id="peg_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>ROE moyen 5 ans — Valeur</label><input id="roe5y" placeholder="Ex: 34% ou 34" /></div>
+          <div class="field"><label>ROE moyen 5 ans — URL source</label><input id="roe5y_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>Quick Ratio — Valeur</label><input id="quick" placeholder="Ex: 0.9" /></div>
+          <div class="field"><label>Quick Ratio — URL source</label><input id="quick_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>Dette/Équité — Valeur</label><input id="de" placeholder="Ex: 1.5" /></div>
+          <div class="field"><label>Dette/Équité — URL source</label><input id="de_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>Marge nette — Valeur</label><input id="netMargin" placeholder="Ex: 25% ou 25" /></div>
+          <div class="field"><label>Marge nette — URL source</label><input id="netMargin_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>EV/EBITDA — Valeur</label><input id="evEbitda" placeholder="Ex: 17.2" /></div>
+          <div class="field"><label>EV/EBITDA — URL source</label><input id="evEbitda_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>Couverture intérêts — Valeur</label><input id="intCov" placeholder="Ex: 8.4x" /></div>
+          <div class="field"><label>Couverture intérêts — URL source</label><input id="intCov_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>Croissance CA (%/an) — Valeur</label><input id="revCagr" placeholder="Ex: 6% ou 6" /></div>
+          <div class="field"><label>Croissance CA — URL source</label><input id="revCagr_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>FCF Yield — Valeur</label><input id="fcfYield" placeholder="Ex: 3.5% ou 3.5" /></div>
+          <div class="field"><label>FCF Yield — URL source</label><input id="fcfYield_url" placeholder="https://..." /></div>
+
+          <div class="field"><label>Payout Ratio — Valeur</label><input id="payout" placeholder="Ex: 55% ou 55" /></div>
+          <div class="field"><label>Payout Ratio — URL source</label><input id="payout_url" placeholder="https://..." /></div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button id="saveActive" class="miniBtn">Enregistrer ce ticker</button>
+          <button id="preview" class="miniBtn">Prévisualiser score</button>
+          <div style="flex:1"></div>
+          <div id="score" class="badge">Score: —</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin:0">
+          <h2>Liens rapides (ticker actif)</h2>
+          <div class="hint" id="linksBox">—</div>
+        </div>
+        <div class="card" style="margin:12px 0 0">
+          <h2>Notes (facultatif)</h2>
+          <div class="hint">Vous pouvez noter vos commentaires (cycle, risques, etc.). Sauvegardé par ticker.</div>
+          <textarea id="notes" placeholder="Ex: sensibilité aux taux, cyclicité semi-conducteurs..."></textarea>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <div class="card">
+    <h1>4) Rapport Markdown (tous les tickers)</h1>
+    <pre id="md">Cliquez “Générer Markdown (tous)”.</pre>
+  </div>
+
 </div>
 
 <script>
-/* ---------- critères & seuils (stricts) ---------- */
+/* ---------------- Helpers tickers ---------------- */
+function normTicker(s){
+  const x = (s||"").trim().toUpperCase();
+  if(!x) return null;
+  if(x.includes(":")) return x;
+  return "NASDAQ:" + x; // défaut
+}
+function getTickerOnly(sym){ return sym.includes(":") ? sym.split(":")[1] : sym; }
+function parseTickerList(text){
+  return (text||"")
+    .split(",")
+    .map(normTicker)
+    .filter(Boolean);
+}
+
+/* ---------------- TradingView ---------------- */
+function loadTradingView(symbol){
+  const el = document.getElementById("tv");
+  el.innerHTML = "";
+  const s = document.createElement("script");
+  s.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+  s.async = true;
+  s.innerHTML = JSON.stringify({
+    autosize: true,
+    symbol: symbol,
+    interval: "D",
+    timezone: "Europe/Paris",
+    theme: "dark",
+    style: "1",
+    locale: "fr",
+    enable_publishing: false,
+    allow_symbol_change: true,
+    support_host: "https://www.tradingview.com"
+  });
+  el.appendChild(s);
+}
+
+/* ---------------- Seuils stricts (11 critères) ---------------- */
 function grade(key, v){
   if(v==null || Number.isNaN(v)) return {c:"Orange", msg:"donnée manquante"};
   switch(key){
@@ -90,8 +220,7 @@ function grade(key, v){
     default: return {c:"Orange",msg:"-"};
   }
 }
-
-function parseNum(s){
+function parseNumLoose(s){
   if(s==null) return null;
   let x = String(s).trim();
   if(!x) return null;
@@ -100,188 +229,276 @@ function parseNum(s){
   const v = Number(x);
   return Number.isFinite(v) ? v : null;
 }
-
-function toRatioIfPercentKey(key, v){
-  // Pour les champs en %, l'utilisateur colle souvent 34 (=> 34%)
+function normalizePercentKeys(key, v){
   if(v==null) return null;
-  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key) && v>1.5) return v/100;
+  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key) && v > 1.5) return v/100;
   return v;
 }
-
 function fmt(key, v){
   if(v==null) return "N/A";
-  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key)) return (v*100).toFixed(1)+"%";
-  if(["evEbitda","intCov"].includes(key)) return v.toFixed(1)+"x";
+  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key)) return (v*100).toFixed(1) + "%";
+  if(["evEbitda","intCov"].includes(key)) return v.toFixed(1) + "x";
   return v.toFixed(2);
 }
-
-function cite(url, label="Source"){
+function cite(url){
   if(!url || !url.trim()) return " [Source manquante]";
-  return ` [[${label}](${url.trim()})]`;
+  return ` [[Source](${url.trim()})]`;
 }
-
-function score(colors){
+function scoreGlobal(colors){
   let V=0,O=0,R=0;
   for(const c of colors){ if(c==="Vert") V++; else if(c==="Orange") O++; else R++; }
   return `${V}V/${O}O/${R}R`;
 }
 
-const METRICS = [
-  ["pe","P/E"],
-  ["peg","PEG"],
-  ["roe5y","ROE moyen 5 ans"],
-  ["quick","Quick Ratio"],
-  ["de","Dette/Équité"],
-  ["netMargin","Marge nette"],
-  ["evEbitda","EV/EBITDA"],
-  ["intCov","Couverture intérêts"],
-  ["revCagr","Croissance CA (%/an)"],
-  ["fcfYield","FCF Yield"],
-  ["payout","Payout Ratio"],
-];
+const KEYS = ["pe","peg","roe5y","quick","de","netMargin","evEbitda","intCov","revCagr","fcfYield","payout"];
+const LABELS = ["P/E","PEG","ROE 5ans","Quick Ratio","Dette/Équité","Marge nette","EV/EBITDA","Couverture intérêts","Croiss. CA","FCF Yield","Payout"];
 
-function sanitizeTickers(input){
-  return (input||"")
-    .split(",")
-    .map(s=>s.trim().toUpperCase())
-    .filter(Boolean);
+/* ---------------- Storage per ticker ---------------- */
+const LS_KEY = "fa_multi_tickers_v1";
+
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); }
+  catch{ return {}; }
+}
+function saveState(state){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function ensureTicker(state, sym){
+  if(!state[sym]){
+    state[sym] = {
+      sector: "",
+      notes: "",
+      metrics: Object.fromEntries(KEYS.map(k => [k, {value:"", url:""}]))
+    };
+  }
+  return state[sym];
 }
 
-/* ---------- UI forms ---------- */
-function makeForms(){
-  const forms = document.getElementById("forms");
-  const tickers = sanitizeTickers(document.getElementById("tickers").value);
-  if(!tickers.length){ forms.textContent = "Ajoutez au moins 1 ticker."; return; }
+/* ---------------- UI binding ---------------- */
+const selectEl = document.getElementById("tickerSelect");
+const activeInfo = document.getElementById("activeInfo");
+const linksBox = document.getElementById("linksBox");
 
-  forms.innerHTML = "";
-  for(const t of tickers){
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <div class="tickerHeader">
-        <div><span class="tickerTitle">${t}</span> <span class="pill">valeur + URL source</span></div>
-        <div class="links">
-          <a target="_blank" href="https://stockanalysis.com/stocks/${t.toLowerCase()}/financials/ratios/">StockAnalysis Ratios</a>
-          <a target="_blank" href="https://stockanalysis.com/stocks/${t.toLowerCase()}/financials/">StockAnalysis Financials</a>
-          <a target="_blank" href="https://finance.yahoo.com/quote/${t}/key-statistics">Yahoo Statistics</a>
-          <a target="_blank" href="https://www.marketbeat.com/stocks/NASDAQ/${t}/financials/">MarketBeat</a>
-        </div>
-      </div>
+function setLinks(sym){
+  const t = getTickerOnly(sym);
+  const lower = t.toLowerCase();
+  linksBox.innerHTML = `
+    <div class="row" style="gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="badge">${sym}</span>
+      <a target="_blank" href="https://stockanalysis.com/stocks/${lower}/financials/ratios/">StockAnalysis Ratios</a>
+      <a target="_blank" href="https://stockanalysis.com/stocks/${lower}/financials/">StockAnalysis Financials</a>
+      <a target="_blank" href="https://stockanalysis.com/stocks/${lower}/financials/cash-flow-statement/">StockAnalysis Cash Flow</a>
+      <a target="_blank" href="https://finance.yahoo.com/quote/${t}/key-statistics">Yahoo Statistics</a>
+      <a target="_blank" href="https://www.marketbeat.com/stocks/NASDAQ/${t}/financials/">MarketBeat</a>
+    </div>
+    <div class="hint" style="margin-top:10px">
+      Conseil: copiez vos chiffres depuis “Ratios” quand possible, puis collez ici + l’URL de la page comme citation.
+    </div>
+  `;
+}
 
-      <div class="grid" style="margin-top:10px">
-        <div class="field">
-          <label>Secteur / Industrie</label>
-          <input data-t="${t}" data-k="sector" placeholder="Ex: Technology / Semiconductors" />
-        </div>
+function fillFormFromState(state, sym){
+  const rec = ensureTicker(state, sym);
+  document.getElementById("sector").value = rec.sector || "";
+  document.getElementById("notes").value = rec.notes || "";
+  for(const k of KEYS){
+    document.getElementById(k).value = rec.metrics[k]?.value || "";
+    document.getElementById(k+"_url").value = rec.metrics[k]?.url || "";
+  }
+  setLinks(sym);
+  activeInfo.textContent = `Actif: ${sym}`;
+  loadTradingView(sym);
+  previewScoreFor(sym, state);
+}
 
-        ${METRICS.map(([k,lab])=>`
-          <div class="field">
-            <label>${lab} — Valeur</label>
-            <input data-t="${t}" data-k="${k}" placeholder="Ex: 18.7, 25%, 12,5, 8x" />
-          </div>
-          <div class="field">
-            <label>${lab} — URL source (obligatoire)</label>
-            <input data-t="${t}" data-k="${k}_url" placeholder="https://..." />
-          </div>
-        `).join("")}
-      </div>
-    `;
-    forms.appendChild(card);
+function saveFormToState(state, sym){
+  const rec = ensureTicker(state, sym);
+  rec.sector = (document.getElementById("sector").value || "").trim();
+  rec.notes  = (document.getElementById("notes").value || "").trim();
+  for(const k of KEYS){
+    rec.metrics[k].value = document.getElementById(k).value || "";
+    rec.metrics[k].url   = document.getElementById(k+"_url").value || "";
   }
 }
 
-function getVal(t,k){
-  return document.querySelector(`[data-t="${t}"][data-k="${k}"]`)?.value ?? "";
+function previewScoreFor(sym, state){
+  const rec = ensureTicker(state, sym);
+  const colors = KEYS.map(k=>{
+    let v = parseNumLoose(rec.metrics[k].value);
+    v = normalizePercentKeys(k, v);
+    return grade(k, v).c;
+  });
+  document.getElementById("score").textContent = "Score: " + scoreGlobal(colors);
 }
 
-function buildReport(){
-  const tickers = sanitizeTickers(document.getElementById("tickers").value);
-  if(!tickers.length) return "Aucun ticker.";
-
+/* ---------------- Markdown generation (tous tickers) ---------------- */
+function buildMarkdownAll(state, symbols){
   const today = new Date().toISOString().slice(0,10);
 
-  // Collect per ticker
-  const rows = [];
-  const bySector = new Map();
-  const verdicts = [];
-  const scoringForRanking = [];
+  // Table
+  let md = `**ANALYSE FONDAMENTALE COMPLÈTE - ACTIONS** (généré le ${today})\n\n`;
+  md += `**TICKERS** : ${symbols.map(getTickerOnly).join(", ")}\n\n`;
 
-  for(const t of tickers){
-    const sector = (getVal(t,"sector").trim() || "N/A");
-    bySector.set(sector, [...(bySector.get(sector)||[]), t]);
-
-    const colors = [];
-    const cell = {};
-
-    for(const [k,lab] of METRICS){
-      let v = parseNum(getVal(t,k));
-      v = toRatioIfPercentKey(k,v);
-      const g = grade(k,v);
-      colors.push(g.c);
-      const url = getVal(t, k+"_url");
-      cell[k] = `${fmt(k,v)} ${g.c} - ${g.msg}${cite(url,"Source")}`;
-    }
-
-    const sg = score(colors);
-    rows.push(`| ${t} | ${sector} | ${cell.pe} | ${cell.peg} | ${cell.roe5y} | ${cell.quick} | ${cell.de} | ${cell.netMargin} | ${cell.evEbitda} | ${cell.intCov} | ${cell.revCagr} | ${cell.fcfYield} | ${cell.payout} | **${sg}** |`);
-
-    // red flags
-    const labels = ["P/E","PEG","ROE 5ans","Quick","Dette/Équité","Marge nette","EV/EBITDA","Couverture intérêts","Croiss. CA","FCF Yield","Payout"];
-    const reds = colors.map((c,i)=>({c,i})).filter(x=>x.c==="Rouge").map(x=>labels[x.i]);
-
-    const V = colors.filter(x=>x==="Vert").length;
-    let concl = (V>=7) ? "Profil qualité attractive" : (reds.length>=3 ? "Spéculatif/cyclique" : "Correct sans marge sécurité");
-
-    verdicts.push(`**${t}** : ✅ Qualité (ROE/marges/bilan) à commenter. ✅ Valorisation (P/E, PEG, EV/EBITDA) à commenter. ✅ Points forts/vigilance. **CONCLUSION** : « ${concl} ». **Score** : ${sg} — **Drapeaux rouges** : ${reds.length?reds.join(", "):"Aucun"}.`);
-
-    scoringForRanking.push({t, V, reds: reds.length, sg});
-  }
-
-  // Ranking (simple, règles fondamentaux)
-  const A = scoringForRanking.filter(x=>x.V>=7 && x.reds<=1);
-  const C = scoringForRanking.filter(x=>x.reds>=3);
-  const B = scoringForRanking.filter(x=>!A.includes(x) && !C.includes(x));
-
-  let md = `**ANALYSE FONDAMENTALE COMPLÈTE - ACTIONS**\n\n`;
-  md += `**TICKERS** : ${tickers.join(", ")}\n\n`;
-  md += `**Périmètre** : données saisies manuellement (TTM/dernier exercice) avec URLs sources. Date génération : ${today}.\n\n`;
-
-  md += `---\n## 1. TABLEAU DES RATIOS CLÉS\n\n`;
+  md += `## 1. TABLEAU DES RATIOS CLÉS\n\n`;
   md += `| Ticker | Secteur | P/E | PEG | ROE 5ans | Quick Ratio | Dette/Équité | Marge nette | EV/EBITDA | Couverture intérêts | Croiss. CA | FCF Yield | Payout | **Score global** |\n`;
   md += `|--------|---------|-----|-----|----------|-------------|--------------|-------------|-----------|--------------------|------------|-----------|--------|------------------|\n`;
-  md += rows.join("\n") + "\n\n";
 
-  md += `---\n## 2. ANALYSE PAR SECTEUR\n`;
-  for(const [sec, list] of bySector.entries()){
-    md += `\n**${sec}** : ${list.join(", ")}\n- 1-2 phrases sur la dynamique actuelle : (à rédiger)\n- Position relative vs pairs : (à rédiger)\n- Mises en garde spécifiques : (à rédiger)\n`;
+  // sector grouping
+  const sectorMap = new Map();
+  const verdicts = [];
+  const ranking = [];
+
+  for(const sym of symbols){
+    const t = getTickerOnly(sym);
+    const rec = ensureTicker(state, sym);
+    const sector = rec.sector || "N/A";
+    sectorMap.set(sector, [...(sectorMap.get(sector)||[]), t]);
+
+    const cells = {};
+    const colors = [];
+
+    for(const k of KEYS){
+      let v = parseNumLoose(rec.metrics[k].value);
+      v = normalizePercentKeys(k, v);
+      const g = grade(k, v);
+      colors.push(g.c);
+      cells[k] = `${fmt(k,v)} ${g.c} - ${g.msg}${cite(rec.metrics[k].url)}`;
+    }
+    const sg = scoreGlobal(colors);
+
+    md += `| ${t} | ${sector} | ${cells.pe} | ${cells.peg} | ${cells.roe5y} | ${cells.quick} | ${cells.de} | ${cells.netMargin} | ${cells.evEbitda} | ${cells.intCov} | ${cells.revCagr} | ${cells.fcfYield} | ${cells.payout} | **${sg}** |\n`;
+
+    const reds = colors.map((c,i)=>({c,i})).filter(x=>x.c==="Rouge").map(x=>LABELS[x.i]);
+    const V = colors.filter(c=>c==="Vert").length;
+
+    let conclusion = (V>=7 && reds.length<=1) ? "Profil qualité attractive" :
+                     (reds.length>=3) ? "Spéculatif/cyclique" :
+                     "Correct sans marge sécurité";
+
+    verdicts.push(`**${t}** : ✅ Qualité fondamentaux (ROE, marges, bilan, couverture) à commenter. ✅ Valorisation vs secteur (P/E, PEG, EV/EBITDA) à commenter. ✅ Points forts/vigilance. **CONCLUSION** : « ${conclusion} ». **Score** : ${sg} — **Drapeaux rouges** : ${reds.length?reds.join(", "):"Aucun"}.`);
+
+    ranking.push({t, sg, V, reds: reds.length});
   }
 
-  md += `\n---\n## 3. VERDICT INDIVIDUEL\n\n` + verdicts.join("\n\n") + "\n\n";
+  // Section 2
+  md += `\n## 2. ANALYSE PAR SECTEUR\n`;
+  for(const [sec, list] of sectorMap.entries()){
+    md += `\n**${sec}** : ${list.join(", ")}\n- 1-2 phrases sur dynamique actuelle (croissance, cycle, marges, capex).\n- Position relative des titres vs pairs.\n- Mises en garde spécifiques.\n`;
+  }
 
-  md += `---\n## 4. CLASSEMENT GLOBAL (fondamentaux uniquement)\n\n`;
-  md += `**A. QUALITÉ - À PRIVILÉGIER**\n` + (A.length ? A.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
-  md += `**B. NEUTRE - À SURVEILLER**\n` + (B.length ? B.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
-  md += `**C. ÉVITER**\n` + (C.length ? C.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+  // Section 3
+  md += `\n## 3. VERDICT INDIVIDUEL\n\n${verdicts.join("\n\n")}\n`;
 
-  md += `---\n## 5. RÉSUMÉ FINAL\n`;
-  md += `1. Actions recommandées + potentiel sectoriel : (à rédiger)\n`;
-  md += `2. Risque global panier : (à rédiger)\n`;
-  md += `3. Logique allocation : (à rédiger)\n`;
+  // Section 4 ranking buckets
+  const A = ranking.filter(x=>x.V>=7 && x.reds<=1);
+  const C = ranking.filter(x=>x.reds>=3);
+  const B = ranking.filter(x=>!A.includes(x) && !C.includes(x));
+
+  md += `\n## 4. CLASSEMENT GLOBAL (fondamentaux uniquement)\n\n`;
+  md += `**A. QUALITÉ - À PRIVILÉGIER**\n`;
+  md += (A.length ? A.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+  md += `**B. NEUTRE - À SURVEILLER**\n`;
+  md += (B.length ? B.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+  md += `**C. ÉVITER**\n`;
+  md += (C.length ? C.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+
+  // Section 5
+  md += `## 5. RÉSUMÉ FINAL\n`;
+  md += `1. Actions recommandées + potentiel sectoriel : (…)\n`;
+  md += `2. Risque global panier : (…)\n`;
+  md += `3. Logique allocation : (…)\n`;
 
   return md;
 }
 
-/* ---------- events ---------- */
-document.getElementById("make").addEventListener("click", makeForms);
-document.getElementById("gen").addEventListener("click", ()=>{
-  document.getElementById("out").textContent = buildReport();
+/* ---------------- Events ---------------- */
+document.getElementById("apply").addEventListener("click", ()=>{
+  const symbols = parseTickerList(document.getElementById("tickersInput").value);
+  // rebuild select
+  selectEl.innerHTML = "";
+  for(const sym of symbols){
+    const opt = document.createElement("option");
+    opt.value = sym;
+    opt.textContent = sym;
+    selectEl.appendChild(opt);
+  }
+
+  const state = loadState();
+  // Ensure records exist
+  for(const sym of symbols) ensureTicker(state, sym);
+  saveState(state);
+
+  if(symbols.length){
+    selectEl.value = symbols[0];
+    fillFormFromState(state, symbols[0]);
+  }else{
+    document.getElementById("md").textContent = "Liste vide.";
+  }
 });
+
+selectEl.addEventListener("change", ()=>{
+  const sym = selectEl.value;
+  const state = loadState();
+  fillFormFromState(state, sym);
+});
+
+document.getElementById("loadTv").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  loadTradingView(sym);
+});
+
+document.getElementById("openLinks").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  const t = getTickerOnly(sym);
+  const lower = t.toLowerCase();
+  const urls = [
+    `https://stockanalysis.com/stocks/${lower}/financials/ratios/`,
+    `https://stockanalysis.com/stocks/${lower}/financials/`,
+    `https://finance.yahoo.com/quote/${t}/key-statistics`,
+  ];
+  for(const u of urls) window.open(u, "_blank");
+});
+
+document.getElementById("saveActive").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  const state = loadState();
+  saveFormToState(state, sym);
+  saveState(state);
+  previewScoreFor(sym, state);
+  activeInfo.textContent = `Actif: ${sym} (enregistré)`;
+});
+
+document.getElementById("preview").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  const state = loadState();
+  // preview based on current form (save then compute)
+  saveFormToState(state, sym);
+  previewScoreFor(sym, state);
+});
+
+document.getElementById("genAll").addEventListener("click", ()=>{
+  const symbols = parseTickerList(document.getElementById("tickersInput").value);
+  const state = loadState();
+
+  // Save current active form before generating
+  if(selectEl.value){
+    saveFormToState(state, selectEl.value);
+    saveState(state);
+  }
+
+  document.getElementById("md").textContent = buildMarkdownAll(state, symbols);
+});
+
 document.getElementById("copy").addEventListener("click", async ()=>{
-  await navigator.clipboard.writeText(document.getElementById("out").textContent);
+  await navigator.clipboard.writeText(document.getElementById("md").textContent);
 });
+
+/* ---------------- Initial load ---------------- */
+document.getElementById("apply").click();
 </script>
 </body>
 </html>
+
 
 
 
