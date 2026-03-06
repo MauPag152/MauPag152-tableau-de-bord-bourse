@@ -1,521 +1,302 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analyse Fondamentale Actions</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0e1a;color:#dde}
-.app{max-width:1400px;margin:0 auto;padding:12px}
-h1{text-align:center;padding:20px;background:#12182b;border:1px solid#1e2848;border-radius:14px;margin-bottom:16px;font-size:1.5em}
-h1 span{background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-
-/* Search */
-.top{background:#12182b;border:1px solid#1e2848;border-radius:14px;padding:20px;margin-bottom:16px}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.inp{flex:1;min-width:220px;padding:12px 16px;background:#080c18;border:2px solid#1e2848;border-radius:10px;color:#dde;font-size:1em}
-.inp:focus{outline:0;border-color:#3b82f6}
-.b{padding:12px 20px;border:0;border-radius:10px;font-weight:700;cursor:pointer;font-size:.9em;transition:.15s}
-.b1{background:linear-gradient(135deg,#3b82f6,#7c3aed);color:#fff}
-.b1:hover{transform:translateY(-1px);box-shadow:0 4px 16px#3b82f644}
-.b2{background:#080c18;color:#8892b0;border:1px solid#1e2848}
-.b2:hover{border-color:#06b6d4;color:#06b6d4}
-.b3{background:#1a0f24;color:#ef4444;border:1px solid#ef444433}
-.tags{display:flex;flex-wrap:wrap;gap:6px;min-height:28px}
-.tag{padding:5px 14px;background:#3b82f615;border:1px solid#3b82f640;border-radius:20px;font-size:.88em;font-weight:600;color:#60a5fa;display:flex;align-items:center;gap:6px}
-.tag u{cursor:pointer;text-decoration:none;opacity:.5;font-size:1.1em}.tag u:hover{color:#ef4444;opacity:1}
-.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.presets .b{padding:7px 14px;font-size:.8em}
-
-/* Help */
-.help{background:#0d1424;border:1px solid#1e2848;border-radius:12px;padding:16px;margin-bottom:16px;line-height:1.7;font-size:.88em;color:#6b7a99}
-.help b{color:#94a3b8}
-.help a{color:#60a5fa}
-
-/* Loading */
-.ld{display:none;text-align:center;padding:50px;background:#12182b;border:1px solid#1e2848;border-radius:14px;margin-bottom:16px}
-.ld.on{display:block}
-.sp{width:40px;height:40px;border:3px solid#1e2848;border-top-color:#3b82f6;border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* Error */
-.er{padding:14px 18px;background:#ef44440f;border:1px solid#ef444433;border-radius:10px;color:#f87171;display:none;margin-bottom:14px;font-size:.92em;line-height:1.6}
-.er.on{display:block}
-.er a{color:#60a5fa}
-
-/* Results */
-.res{display:none}.res.on{display:block}
-.sec{background:#12182b;border:1px solid#1e2848;border-radius:14px;padding:20px;margin-bottom:14px}
-.sh{font-size:1.1em;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid#1e2848;display:flex;align-items:center;gap:8px}
-.num{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b82f6,#7c3aed);border-radius:7px;font-size:.72em;font-weight:800;color:#fff}
-
-/* Table */
-.tw{overflow-x:auto;border-radius:10px;border:1px solid#1e2848}
-table{width:100%;border-collapse:collapse;font-size:.82em;white-space:nowrap}
-th{background:#080c18;padding:10px 8px;text-align:left;font-weight:700;color:#6b7a99;text-transform:uppercase;font-size:.72em;letter-spacing:.5px;border-bottom:2px solid#1e2848;position:sticky;top:0}
-td{padding:9px 8px;border-bottom:1px solid#151d35}
-tr:hover{background:#3b82f606}
-.tk{font-weight:700;color:#60a5fa}
-.sk{color:#4a5578;font-size:.82em}
-.v{font-weight:700;display:block;font-size:.92em}
-.c{font-size:.68em;opacity:.55;display:block;margin-top:1px}
-.g{color:#10b981}.o{color:#f59e0b}.r{color:#ef4444}
-.pill{display:inline-block;padding:3px 9px;border-radius:6px;font-size:.82em;font-weight:700}
-.pg{background:#10b98115;color:#10b981;border:1px solid#10b98130}
-.po{background:#f59e0b15;color:#f59e0b;border:1px solid#f59e0b30}
-.pr{background:#ef444415;color:#ef4444;border:1px solid#ef444430}
-
-/* Cards */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:12px}
-.card{background:#0a1020;border:1px solid#1e2848;border-radius:12px;padding:16px;transition:.2s}
-.card:hover{border-color:#3b82f6;transform:translateY(-2px)}
-.chd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid#151d35}
-.ctn{font-weight:800;color:#60a5fa;font-size:1.15em}
-.csc{font-size:.75em;color:#4a5578;background:#7c3aed12;padding:3px 8px;border-radius:5px}
-.cbd p{font-size:.86em;line-height:1.55;color:#7b8aaa;margin-bottom:5px}
-.cbd .hl{color:#c8d0e0;font-weight:600}
-.ccl{margin-top:10px;padding:9px 13px;border-radius:7px;font-weight:600;font-size:.84em}
-.ca{background:#10b98112;border:1px solid#10b98128;color:#10b981}
-.cb{background:#f59e0b12;border:1px solid#f59e0b28;color:#f59e0b}
-.cx{background:#ef444412;border:1px solid#ef444428;color:#ef4444}
-.rfl{margin-top:7px;padding:7px 11px;background:#ef44440a;border-left:3px solid#ef4444;border-radius:4px;font-size:.78em;color:#ef4444;font-weight:600}
-
-/* Ranking */
-.rki{padding:10px 14px;border-radius:8px;font-size:.88em;margin-bottom:6px;display:flex;gap:8px}
-.rki-a{background:#10b98110;border:1px solid#10b98120}
-.rki-b{background:#f59e0b10;border:1px solid#f59e0b20}
-.rki-c{background:#ef444410;border:1px solid#ef444420}
-.rki strong{min-width:50px;color:#dde}
-.rkl{font-weight:700;font-size:.95em;margin:14px 0 8px}
-
-/* Summary */
-.stp{font-size:.9em;line-height:1.7;color:#7b8aaa;margin-bottom:10px;padding:12px;background:#0a1020;border-radius:8px;border-left:3px solid#3b82f6}
-.stp strong{color:#c8d0e0}
-
-/* Sector blocks */
-.sblk{background:#0a1020;border:1px solid#1e2848;border-radius:10px;padding:14px;margin-bottom:10px}
-.snm{font-weight:700;color:#06b6d4;margin-bottom:6px;font-size:.95em}
-.sbc{color:#7b8aaa;font-size:.86em;line-height:1.6}
-.sbc p{margin-bottom:5px}
-
-.note{text-align:center;padding:14px;color:#3a4560;font-size:.75em;border-top:1px solid#1e2848;margin-top:16px}
-.eb{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px}
-.ib{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;font-size:.8em;color:#3a4560}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle}
-
-/* Manual form */
-.mf{background:#12182b;border:1px solid#1e2848;border-radius:14px;padding:20px;margin-bottom:16px;display:none}
-.mf.on{display:block}
-.mf h3{color:#60a5fa;font-size:1em;margin-bottom:12px}
-.mrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.mrow label{font-size:.82em;color:#6b7a99;min-width:80px;display:flex;align-items:center}
-.mrow input,.mrow select{padding:7px 10px;background:#080c18;border:1px solid#1e2848;border-radius:7px;color:#dde;font-size:.88em;width:110px}
-.mrow input:focus,.mrow select:focus{outline:0;border-color:#3b82f6}
-.msep{border:0;border-top:1px solid#1e2848;margin:12px 0}
-
-@media(max-width:700px){
-.grid{grid-template-columns:1fr}
-table{font-size:.72em}
-.row{flex-direction:column}
-.inp{min-width:100%}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse Fondamentale - Ticker Dynamique</title>
+  <style>
+    body{font-family:Segoe UI,Arial,sans-serif;max-width:1200px;margin:20px auto;padding:20px;background:#0b1220;color:#e7eefc}
+    .card{background:#0f1b33;border:1px solid #233357;border-radius:12px;padding:20px;margin-bottom:20px}
+    h1{font-size:20px;margin-top:0;color:#fff}
+    input,select,button{padding:10px 14px;border-radius:8px;border:1px solid #233357;background:#0b1730;color:#fff;font-size:14px}
+    input{width:200px}
+    button{background:#1a3a6b;cursor:pointer;font-weight:600}
+    button:hover{background:#2a4a8b}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:15px}
+    .field{display:flex;flex-direction:column;gap:4px}
+    label{font-size:12px;color:#a9b7d6}
+    .output{background:#0b1730;border:1px solid #233357;border-radius:8px;padding:12px;margin-top:20px;overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #233357}
+    th{color:#8ab4ff;font-weight:600}
+    .vert{color:#19c37d;font-weight:600}
+    .orange{color:#f59e0b;font-weight:600}
+    .rouge{color:#ef4444;font-weight:600}
+    pre{background:#0b1730;padding:15px;border-radius:8px;border:1px solid #233357;white-space:pre-wrap;overflow-x:auto;font-size:12px}
+    .hint{color:#a9b7d6;font-size:12px;margin-top:10px;line-height:1.4}
+    .tradingview-widget-container{margin:20px 0;height:400px}
+    .section-title{color:#8ab4ff;font-size:14px;margin:20px 0 10px;font-weight:600}
+  </style>
 </head>
 <body>
-<div class="app">
 
-<h1>📊 <span>Analyse Fondamentale Actions</span></h1>
-
-<!-- HELP BOX -->
-<div class="help">
-  <b>Mode d'emploi rapide :</b><br>
-  1️⃣ Tapez un ticker (ex: <b>AAPL</b>) et cliquez ➕ — ou choisissez un groupe prédéfini ci-dessous<br>
-  2️⃣ Un formulaire apparaît : remplissez les données depuis 
-  <a href="https://stockanalysis.com" target="_blank">StockAnalysis.com</a> (tapez le ticker → onglet <b>Financials</b> ou <b>Statistics</b>)<br>
-  3️⃣ Cliquez <b>🚀 Analyser</b> → rapport complet avec scoring automatique V/O/R<br>
-  💡 <b>Astuce :</b> Les champs vides seront ignorés. Même 3-4 ratios suffisent pour un premier aperçu !
-</div>
-
-<!-- SEARCH -->
-<div class="top">
-  <div class="row">
-    <input class="inp" type="text" id="ti" placeholder="Entrez un ticker : AAPL, MSFT, TSLA..." onkeydown="if(event.key==='Enter'){addT();this.focus()}">
-    <button class="b b1" onclick="addT()">➕ Ajouter</button>
-    <button class="b b1" onclick="analyze()">🚀 Analyser</button>
-    <button class="b b3" onclick="resetAll()">🗑</button>
+<div class="card">
+  <h1>🔍 Analyse Fondamentale Complète</h1>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <input type="text" id="tickerInput" value="AAPL" placeholder="AAPL, MSFT, TSLA...">
+    <button onclick="updateTicker()">Charger le graphique</button>
+    <button onclick="generateAnalysis()">Générer l'analyse Markdown</button>
   </div>
-  <div class="tags" id="tags"></div>
-  <div class="presets">
-    <button class="b b2" onclick="preset(['AAPL','MSFT','GOOGL','AMZN','META'])">🏢 Big Tech</button>
-    <button class="b b2" onclick="preset(['JPM','BAC','GS','WFC'])">🏦 Banques</button>
-    <button class="b b2" onclick="preset(['JNJ','PFE','UNH','ABBV'])">💊 Santé</button>
-    <button class="b b2" onclick="preset(['XOM','CVX','COP','SLB'])">⛽ Énergie</button>
-    <button class="b b2" onclick="preset(['NVDA','AMD','INTC','TSM'])">🔧 Semis</button>
-    <button class="b b2" onclick="preset(['TSLA','F','GM','RIVN'])">🚗 Auto</button>
+  <div class="hint">
+    💡 <strong>Comment ça marche :</strong> Le graphique s'affiche automatiquement. Pour le tableau des ratios, 
+    copiez les valeurs depuis <a href="https://finance.yahoo.com" target="_blank" style="color:#8ab4ff">Yahoo Finance</a> 
+    ou <a href="https://stockanalysis.com" target="_blank" style="color:#8ab4ff">StockAnalysis</a> et collez-les ci-dessous. 
+    Les couleurs se mettront automatiquement selon vos règles.
   </div>
 </div>
 
-<!-- ERROR -->
-<div id="err" class="er"></div>
-
-<!-- MANUAL FORMS -->
-<div id="forms"></div>
-
-<!-- RESULTS -->
-<div id="res" class="res">
-  <div class="eb">
-    <button class="b b2" onclick="toCSV()">📥 CSV</button>
-    <button class="b b2" onclick="window.print()">🖨</button>
-  </div>
-  <div class="ib">
-    <span><span class="dot" style="background:#10b981"></span>Vert = Bon</span>
-    <span><span class="dot" style="background:#f59e0b"></span>Orange = Attention</span>
-    <span><span class="dot" style="background:#ef4444"></span>Rouge = Alerte</span>
-  </div>
-  <div class="sec" id="s1"></div>
-  <div class="sec" id="s2"></div>
-  <div class="sec" id="s3"></div>
-  <div class="sec" id="s4"></div>
-  <div class="sec" id="s5"></div>
-  <div class="note">📊 Données saisies manuellement — Sources recommandées : StockAnalysis, Yahoo Finance, GuruFocus<br>⚠️ Ne constitue pas un conseil en investissement.</div>
+<!-- Widget TradingView (automatique) -->
+<div class="card">
+  <div class="tradingview-widget-container" id="tradingview-widget"></div>
 </div>
 
+<!-- Formulaire de saisie simple -->
+<div class="card">
+  <div class="section-title">📊 Saisie des ratios (copier depuis Yahoo Finance)</div>
+  <div class="grid">
+    <div class="field">
+      <label>P/E Ratio (Cours/Bénéfice)</label>
+      <input type="number" step="0.1" id="pe" placeholder="ex: 24.5">
+    </div>
+    <div class="field">
+      <label>PEG Ratio</label>
+      <input type="number" step="0.1" id="peg" placeholder="ex: 1.8">
+    </div>
+    <div class="field">
+      <label>ROE 5 ans (%)</label>
+      <input type="number" step="0.1" id="roe" placeholder="ex: 34">
+    </div>
+    <div class="field">
+      <label>Quick Ratio</label>
+      <input type="number" step="0.1" id="quick" placeholder="ex: 0.9">
+    </div>
+    <div class="field">
+      <label>Dette/Équité</label>
+      <input type="number" step="0.1" id="de" placeholder="ex: 1.5">
+    </div>
+    <div class="field">
+      <label>Marge Nette (%)</label>
+      <input type="number" step="0.1" id="margin" placeholder="ex: 25">
+    </div>
+    <div class="field">
+      <label>EV/EBITDA</label>
+      <input type="number" step="0.1" id="evebitda" placeholder="ex: 17.2">
+    </div>
+    <div class="field">
+      <label>Couverture intérêts (x)</label>
+      <input type="number" step="0.1" id="coverage" placeholder="ex: 8.4">
+    </div>
+    <div class="field">
+      <label>Croissance CA (%/an)</label>
+      <input type="number" step="0.1" id="growth" placeholder="ex: 6">
+    </div>
+    <div class="field">
+      <label>FCF Yield (%)</label>
+      <input type="number" step="0.1" id="fcf" placeholder="ex: 3.5">
+    </div>
+    <div class="field">
+      <label>Payout Ratio (%)</label>
+      <input type="number" step="0.1" id="payout" placeholder="ex: 55">
+    </div>
+    <div class="field">
+      <label>Secteur</label>
+      <input type="text" id="sector" placeholder="ex: Technology" value="Technology">
+    </div>
+  </div>
+  <button onclick="calculateColors()" style="margin-top:15px">Calculer les scores et couleurs</button>
+</div>
+
+<!-- Tableau de résultats -->
+<div class="card" id="resultCard" style="display:none">
+  <div class="section-title">📋 Tableau des ratios colorés</div>
+  <div class="output" id="tableOutput"></div>
+  
+  <div class="section-title" style="margin-top:20px">📄 Markdown à copier</div>
+  <pre id="markdownOutput"></pre>
+  <button onclick="copyMarkdown()" style="margin-top:10px">Copier le Markdown</button>
 </div>
 
 <script>
-// ============ STATE ============
-let T = [], D = [];
-const $ = id => document.getElementById(id);
-
-const SECTORS = ['Technology','Healthcare','Financial Services','Energy','Consumer Cyclical',
-'Communication Services','Industrials','Consumer Defensive','Basic Materials','Real Estate','Utilities','Autre'];
-
-// Champs avec label, placeholder, et aide (où trouver)
-const FIELDS = [
-  {k:'pe',   l:'P/E',           ph:'ex: 28.5',   tip:'StockAnalysis → Valuation'},
-  {k:'peg',  l:'PEG',           ph:'ex: 1.2',    tip:'StockAnalysis → Valuation'},
-  {k:'roe',  l:'ROE 5a (%)',    ph:'ex: 22',      tip:'StockAnalysis → Financials → ROE',pct:1},
-  {k:'qr',   l:'Quick Ratio',   ph:'ex: 1.1',    tip:'StockAnalysis → Financials → Balance'},
-  {k:'de',   l:'Dettes/Équité', ph:'ex: 0.65',   tip:'StockAnalysis → Financials'},
-  {k:'nm',   l:'Marge nette(%)',ph:'ex: 15',      tip:'StockAnalysis → Financials → Margins',pct:1},
-  {k:'eveb', l:'EV/EBITDA',     ph:'ex: 18',      tip:'StockAnalysis → Valuation'},
-  {k:'ic',   l:'Couv. intérêts',ph:'ex: 12',      tip:'GuruFocus / calcul EBIT÷Intérêts'},
-  {k:'rg',   l:'Croiss. CA(%)', ph:'ex: 8',       tip:'StockAnalysis → Financials → Revenue',pct:1},
-  {k:'fcfy', l:'FCF Yield(%)',  ph:'ex: 3.5',     tip:'StockAnalysis → Statistics',pct:1},
-  {k:'po',   l:'Payout(%)',     ph:'ex: 25',      tip:'StockAnalysis → Dividend',pct:1},
-];
-
-// ============ TICKER MANAGEMENT ============
-function clean(s) {
-  let t = s.trim().toUpperCase();
-  if (t.includes(':')) t = t.split(':').pop();
-  return t.replace(/[^A-Z0-9.-]/g, '');
-}
-
-function addT() {
-  const i = $('ti'), v = i.value;
-  if (!v.trim()) return;
-  v.split(/[,;\s]+/).forEach(p => {
-    const t = clean(p);
-    if (t && !T.includes(t)) T.push(t);
+// ==================== WIDGET TRADINGVIEW ====================
+function loadTradingView(ticker) {
+  const container = document.getElementById('tradingview-widget');
+  container.innerHTML = '';
+  
+  const script = document.createElement('script');
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  script.async = true;
+  script.innerHTML = JSON.stringify({
+    "autosize": true,
+    "symbol": ticker,
+    "interval": "D",
+    "timezone": "Europe/Paris",
+    "theme": "dark",
+    "style": "1",
+    "locale": "fr",
+    "enable_publishing": false,
+    "allow_symbol_change": true,
+    "support_host": "https://www.tradingview.com"
   });
-  i.value = '';
-  render();
+  
+  container.appendChild(script);
 }
 
-function removeT(t) {
-  T = T.filter(x => x !== t);
-  render();
+function updateTicker() {
+  const ticker = document.getElementById('tickerInput').value.toUpperCase();
+  loadTradingView(ticker);
 }
 
-function preset(list) {
-  T = [...list];
-  render();
-  // scroll to forms
-  setTimeout(() => $('forms').scrollIntoView({behavior:'smooth'}), 100);
-}
-
-function resetAll() {
-  T = []; D = [];
-  render();
-  $('res').classList.remove('on');
-  $('err').classList.remove('on');
-}
-
-function render() {
-  // Tags
-  $('tags').innerHTML = T.map(t =>
-    `<span class="tag">${t}<u onclick="removeT('${t}')">✕</u></span>`
-  ).join('');
-  // Forms
-  renderForms();
-}
-
-// ============ MANUAL FORMS ============
-function renderForms() {
-  if (!T.length) { $('forms').innerHTML = ''; return; }
-
-  let h = '';
-  T.forEach(t => {
-    h += `<div class="mf on">
-      <h3>📝 ${t} — <a href="https://stockanalysis.com/stocks/${t.toLowerCase()}/" target="_blank" style="color:#06b6d4;font-size:.85em;font-weight:400">Voir sur StockAnalysis ↗</a></h3>
-      <div class="mrow">
-        <label>Secteur</label>
-        <select id="f_${t}_sector" onchange="saveF('${t}','sector',this.value)">
-          ${SECTORS.map(s => `<option value="${s}" ${loadF(t,'sector')===s?'selected':''}>${s}</option>`).join('')}
-        </select>
-      </div>
-      <hr class="msep">
-      <div style="display:flex;flex-wrap:wrap;gap:6px">`;
-
-    FIELDS.forEach(f => {
-      const saved = loadF(t, f.k);
-      h += `<div class="mrow" title="${f.tip}">
-        <label>${f.l}</label>
-        <input type="text" id="f_${t}_${f.k}" placeholder="${f.ph}" value="${saved}"
-          oninput="saveF('${t}','${f.k}',this.value)">
-      </div>`;
-    });
-
-    h += `</div></div>`;
-  });
-
-  $('forms').innerHTML = h;
-}
-
-function saveF(t, k, v) { localStorage.setItem(`s_${t}_${k}`, v); }
-function loadF(t, k) { return localStorage.getItem(`s_${t}_${k}`) || ''; }
-
-// ============ GATHER DATA ============
-function gather() {
-  return T.map(t => {
-    const num = k => { const v = parseFloat($(`f_${t}_${k}`)?.value); return isNaN(v) ? null : v; };
-    const d = { ticker: t, sector: $(`f_${t}_sector`)?.value || 'Autre' };
-
-    FIELDS.forEach(f => {
-      let v = num(f.k);
-      if (v !== null && f.pct) v = v / 100; // Convert % to decimal
-      d[f.k] = v;
-    });
-    return d;
-  });
-}
-
-// ============ COLOR CODING ============
-function color(m, v) {
-  if (v === null || v === undefined || !isFinite(v)) return { s: '', l: 'N/A' };
-  const R = {
-    pe:   { g: v=>v>0&&v<=16,     o: v=>v>16&&v<20,       gl:'Attractif',  ol:'Acceptable', rl:'Élevé' },
-    peg:  { g: v=>v>0&&v<=1,      o: v=>v>1&&v<1.5,       gl:'Qualité',    ol:'Modéré',     rl:'Surévalué' },
-    roe:  { g: v=>v>=.15,         o: v=>v>=.1&&v<.15,     gl:'Excellent',  ol:'Correct',    rl:'Faible' },
-    qr:   { g: v=>v>=1,           o: v=>v>=.5&&v<1,       gl:'Solide',     ol:'Tendu',      rl:'Risqué' },
-    de:   { g: v=>v>=0&&v<=.5,    o: v=>v>.5&&v<=1,       gl:'Sain',       ol:'Modéré',     rl:'Endetté' },
-    nm:   { g: v=>v>=.1,          o: v=>v>=.05&&v<.1,     gl:'Rentable',   ol:'Modeste',    rl:'Faible' },
-    eveb: { g: v=>v>0&&v<=8,      o: v=>v>8&&v<12,        gl:'Attractif',  ol:'Correct',    rl:'Cher' },
-    ic:   { g: v=>v>=5,           o: v=>v>=3&&v<5,        gl:'Confort.',   ol:'Tendu',      rl:'Risqué' },
-    rg:   { g: v=>v>=.1,          o: v=>v>=.05&&v<.1,     gl:'Forte',      ol:'Modérée',    rl:'Faible' },
-    fcfy: { g: v=>v>=.08,         o: v=>v>=.04&&v<.08,    gl:'Attractif',  ol:'Correct',    rl:'Faible' },
-    po:   { g: v=>v>=.2&&v<=.8,   o: v=>(v>=0&&v<.2)||(v>.8&&v<=1), gl:'Souten.', ol:'Atypique', rl:'Insout.' },
-  };
-  const r = R[m]; if (!r) return { s: '', l: '' };
-  if (r.g(v)) return { s: 'g', l: r.gl };
-  if (r.o(v)) return { s: 'o', l: r.ol };
-  return { s: 'r', l: r.rl };
-}
-
-function fmt(m, v) {
-  if (v === null || v === undefined || !isFinite(v)) return 'N/A';
-  if (['roe','nm','rg','fcfy','po'].includes(m)) return (v*100).toFixed(1)+'%';
-  if (m === 'ic') return v.toFixed(1)+'x';
-  return v.toFixed(2);
-}
-
-function score(d) {
-  const K = ['pe','peg','roe','qr','de','nm','eveb','ic','rg','fcfy','po'];
-  let g=0, o=0, r=0;
-  K.forEach(k => { const c = color(k,d[k]); if(c.s==='g')g++; else if(c.s==='o')o++; else if(c.s==='r')r++ });
-  return { g, o, r };
-}
-
-function cat(s) { if(s.g>=7&&s.r<=2)return'A'; if(s.r>=4)return'C'; return'B'; }
-function pillCls(s) { if(s.g>=7)return'pg'; if(s.r>=4)return'pr'; return'po'; }
-
-// ============ SECTOR WARNINGS ============
-const WARN = {
-  'Technology':'Sensible aux taux, rotation growth/value. Compression multiples possible.',
-  'Healthcare':'Risque réglementaire FDA/pricing. Pipelines binaires.',
-  'Financial Services':'Cyclique. Courbe des taux, risque crédit.',
-  'Energy':'Cyclicité pétrole/gaz. Transition énergétique.',
-  'Consumer Cyclical':'Cycles de consommation, confiance ménages.',
-  'Communication Services':'Dépendance pub, compétition streaming.',
-  'Industrials':'Cyclique, capex, supply chain.',
-  'Consumer Defensive':'Défensif mais croissance limitée. Pression inflation.',
-  'Basic Materials':'Très cyclique, commodités.',
-  'Real Estate':'Sensible taux. Évaluer FFO plutôt que P/E.',
-  'Utilities':'Défensif, régulé, rendement dividende.',
+// ==================== LOGIQUE DES COULEURS ====================
+const rules = {
+  pe: { green: 16, orange: 20, unit: 'x', name: 'P/E' },
+  peg: { green: 1.0, orange: 1.5, unit: '', name: 'PEG' },
+  roe: { green: 15, orange: 10, unit: '%', name: 'ROE 5ans', reverse: true }, // >= is good
+  quick: { green: 1.0, orange: 0.5, unit: '', name: 'Quick Ratio', reverse: true },
+  de: { green: 0.5, orange: 1.0, unit: '', name: 'Dette/Équité' }, // <= is good
+  margin: { green: 10, orange: 5, unit: '%', name: 'Marge nette', reverse: true },
+  evebitda: { green: 8, orange: 12, unit: 'x', name: 'EV/EBITDA' },
+  coverage: { green: 5, orange: 3, unit: 'x', name: 'Couverture intérêts', reverse: true },
+  growth: { green: 10, orange: 5, unit: '%', name: 'Croiss. CA', reverse: true },
+  fcf: { green: 8, orange: 4, unit: '%', name: 'FCF Yield', reverse: true },
+  payout: { type: 'payout' } // Special case
 };
 
-// ============ RENDER SECTIONS ============
-function renderS1(dl) {
-  const M = [{k:'pe',l:'P/E'},{k:'peg',l:'PEG'},{k:'roe',l:'ROE'},{k:'qr',l:'Quick'},{k:'de',l:'D/E'},{k:'nm',l:'Marge'},{k:'eveb',l:'EV/EB'},{k:'ic',l:'Couv.'},{k:'rg',l:'Cr.CA'},{k:'fcfy',l:'FCF'},{k:'po',l:'Pay.'}];
-  let h = `<div class="sh"><span class="num">1</span>Tableau des Ratios</div><div class="tw"><table><thead><tr><th>Ticker</th><th>Secteur</th>`;
-  M.forEach(m => h += `<th>${m.l}</th>`);
-  h += `<th>Score</th></tr></thead><tbody>`;
-  dl.forEach(d => {
-    const s = score(d), pc = pillCls(s);
-    h += `<tr><td class="tk">${d.ticker}</td><td class="sk">${d.sector}</td>`;
-    M.forEach(m => {
-      const c = color(m.k, d[m.k]);
-      h += `<td class="${c.s}"><span class="v">${fmt(m.k,d[m.k])}</span><span class="c">${c.l}</span></td>`;
-    });
-    h += `<td><span class="pill ${pc}">${s.g}V/${s.o}O/${s.r}R</span></td></tr>`;
-  });
-  h += '</tbody></table></div>';
-  $('s1').innerHTML = h;
+function getColor(key, value) {
+  if (value === '' || value === null || isNaN(value)) return { code: 'Orange', text: 'donnée manquante' };
+  
+  const rule = rules[key];
+  const v = parseFloat(value);
+  
+  if (key === 'payout') {
+    if (v > 100) return { code: 'Rouge', text: 'dividende non soutenable' };
+    if (v >= 20 && v <= 80) return { code: 'Vert', text: 'payout soutenable' };
+    return { code: 'Orange', text: 'politique prudente/tendue' };
+  }
+  
+  const isGoodHigh = rule.reverse; // true = plus c'est grand mieux c'est
+  
+  if (isGoodHigh) {
+    if (v >= rule.green) return { code: 'Vert', text: getComment(key, 'good') };
+    if (v >= rule.orange) return { code: 'Orange', text: getComment(key, 'mid') };
+    return { code: 'Rouge', text: getComment(key, 'bad') };
+  } else {
+    if (v <= rule.green) return { code: 'Vert', text: getComment(key, 'good') };
+    if (v < rule.orange) return { code: 'Orange', text: getComment(key, 'mid') };
+    return { code: 'Rouge', text: getComment(key, 'bad') };
+  }
 }
 
-function renderS2(dl) {
-  const secs = {};
-  dl.forEach(d => { const s=d.sector||'Autre'; if(!secs[s])secs[s]=[]; secs[s].push(d) });
-  let h = `<div class="sh"><span class="num">2</span>Analyse par Secteur</div>`;
-  Object.entries(secs).forEach(([s, st]) => {
-    const ape = st.filter(x=>x.pe).reduce((a,x)=>a+x.pe,0)/(st.filter(x=>x.pe).length||1);
-    const amn = st.filter(x=>x.nm!=null).reduce((a,x)=>a+x.nm,0)/(st.filter(x=>x.nm!=null).length||1);
-    const best = st.reduce((b,x)=>(!b||(x.roe||0)>(b.roe||0))?x:b,null);
-    const pes = st.filter(x=>x.pe).map(x=>x.pe);
-    h += `<div class="sblk"><div class="snm">🏷 ${s} (${st.map(x=>x.ticker).join(', ')})</div><div class="sbc">
-    <p><b>Dynamique :</b> P/E moyen ${ape.toFixed(1)}x, marge nette moy. ${(amn*100).toFixed(1)}%.</p>
-    <p><b>Position :</b> ${best&&best.roe?best.ticker+' meilleur ROE ('+(best.roe*100).toFixed(1)+'%).':''}
-    ${pes.length>1?'P/E de '+Math.min(...pes).toFixed(1)+' à '+Math.max(...pes).toFixed(1)+'.':''}</p>
-    <p>⚠️ ${WARN[s]||'Analyser les spécificités sectorielles.'}</p></div></div>`;
-  });
-  $('s2').innerHTML = h;
-}
-
-function renderS3(dl) {
-  let h = `<div class="sh"><span class="num">3</span>Verdict Individuel</div><div class="grid">`;
-  dl.forEach(d => {
-    const s = score(d), ct = cat(s);
-    const sp=[], wp=[], rf=[];
-
-    if(d.roe!=null){ d.roe>=.15?sp.push('ROE solide ('+(d.roe*100).toFixed(1)+'%)'):d.roe<.1?wp.push('ROE faible'):0 }
-    if(d.nm!=null){ d.nm>=.1?sp.push('marges élevées'):d.nm<.05?wp.push('marges faibles'):0 }
-    if(d.de!=null){ d.de<=.5?sp.push('bilan sain'):d.de>1?(wp.push('endetté'),rf.push('D/E>1')):0 }
-    if(d.ic!=null){ d.ic>=5?sp.push('couverture confortable'):d.ic<3?(wp.push('couverture fragile'),rf.push('Couv.<3x')):0 }
-    if(d.pe!=null){ d.pe<=16?sp.push('P/E attractif'):d.pe>=20?wp.push('P/E élevé'):0 }
-    if(d.peg!=null&&d.peg>=1.5) rf.push('PEG≥1.5');
-    if(d.qr!=null&&d.qr<.5) rf.push('Quick<0.5');
-    if(d.po!=null&&d.po>1) rf.push('Payout>100%');
-    if(d.fcfy!=null&&d.fcfy>=.08) sp.push('FCF yield attractif');
-
-    const ccl = ct==='A'?'ca':ct==='B'?'cb':'cx';
-    const ctx = ct==='A'?'Profil qualité attractive':ct==='B'?'Correct sans marge de sécurité':'Spéculatif / cyclique';
-
-    h += `<div class="card"><div class="chd"><span class="ctn">${d.ticker}</span><span class="csc">${d.sector}</span></div>
-    <div class="cbd">
-    <p>✅ <span class="hl">Fondamentaux :</span> ${sp.length?sp.join(', ')+'.':'Données insuffisantes ou aucun point fort.'}</p>
-    <p>✅ <span class="hl">Valorisation :</span> P/E ${d.pe!=null?d.pe.toFixed(1):'N/A'}, PEG ${d.peg!=null?d.peg.toFixed(2):'N/A'}, EV/EBITDA ${d.eveb!=null?d.eveb.toFixed(1):'N/A'}.</p>
-    <p>✅ <span class="hl">Vigilance :</span> ${wp.length?wp.join(', ')+'.':'RAS.'}</p>
-    <div class="ccl ${ccl}"><b>CONCLUSION :</b> ${ctx} — ${s.g}/11 Vert</div>
-    ${rf.length?`<div class="rfl">🚩 ${rf.join(' • ')}</div>`:''}</div></div>`;
-  });
-  h += '</div>';
-  $('s3').innerHTML = h;
-}
-
-function renderS4(dl) {
-  const a=[], b=[], c=[];
-  dl.forEach(d => { const s=score(d); ({A:a,B:b,C:c})[cat(s)].push({...d,_s:s}) });
-  [a,b,c].forEach(x => x.sort((a,b)=>b._s.g-a._s.g));
-
-  let h = `<div class="sh"><span class="num">4</span>Classement Global</div>`;
-
-  const mk = (items,lbl,cls,ic) => {
-    if (!items.length) return '';
-    return `<div class="rkl ${cls}">${lbl}</div>` +
-      items.map(d => `<div class="rki ${ic}"><strong>${d.ticker}</strong><span>${d._s.g}V/${d._s.o}O/${d._s.r}R — ${shortJ(d)}</span></div>`).join('');
+function getComment(key, level) {
+  const comments = {
+    pe: { good: 'attractif', mid: 'acceptable', bad: 'élevé' },
+    peg: { good: 'croissance qualité', mid: 'croissance correcte', bad: 'croissance chère' },
+    roe: { good: 'rentabilité élevée', mid: 'rentabilité moyenne', bad: 'rentabilité faible' },
+    quick: { good: 'bonne liquidité CT', mid: 'liquidité à surveiller', bad: 'liquidité faible' },
+    de: { good: 'endettement maîtrisé', mid: 'endettement modéré', bad: 'endettement élevé' },
+    margin: { good: 'profitabilité solide', mid: 'profitabilité moyenne', bad: 'profitabilité faible' },
+    evebitda: { good: 'valorisation attractive', mid: 'valorisation correcte', bad: 'valorisation élevée' },
+    coverage: { good: 'couverture confortable', mid: 'couverture limite', bad: 'couverture faible' },
+    growth: { good: 'croissance forte', mid: 'croissance modérée', bad: 'croissance faible' },
+    fcf: { good: 'cash attractif', mid: 'cash correct', bad: 'cash faible' }
   };
-
-  h += mk(a,'🟢 A. QUALITÉ — À PRIVILÉGIER','g','rki-a');
-  h += mk(b,'🟠 B. NEUTRE — À SURVEILLER','o','rki-b');
-  h += mk(c,'🔴 C. ÉVITER','r','rki-c');
-
-  $('s4').innerHTML = h;
+  return comments[key]?.[level] || '';
 }
 
-function shortJ(d) {
-  const p = [];
-  if(d.pe!=null){ d.pe<=16?p.push('valo attractive'):d.pe>=25?p.push('valo tendue'):0 }
-  if(d.roe!=null&&d.roe>=.15) p.push('ROE solide');
-  if(d.nm!=null&&d.nm>=.1) p.push('marges élevées');
-  if(d.de!=null&&d.de>1) p.push('endetté');
-  if(d.fcfy!=null&&d.fcfy>=.08) p.push('FCF yield');
-  return (p.length ? p.slice(0,3).join(', ') : 'profil mixte') + '.';
-}
-
-function renderS5(dl) {
-  const a=[], b=[], c=[];
-  dl.forEach(d => ({A:a,B:b,C:c})[cat(score(d))].push(d.ticker));
-  const secs = [...new Set(dl.map(d=>d.sector))];
-  const avg = dl.reduce((s,d)=>s+score(d).g,0)/dl.length;
-
-  $('s5').innerHTML = `<div class="sh"><span class="num">5</span>Résumé Final</div>
-  <div class="stp"><strong>1. Recommandations :</strong> ${a.length?a.join(', ')+' — majorité Vert, meilleur profil risque/rendement.':'Aucun titre clairement « qualité attractive ».'} ${b.length?b.join(', ')+' à surveiller.':''}</div>
-  <div class="stp"><strong>2. Risques :</strong> ${secs.length} secteur(s) couvert(s). Score moyen ${avg.toFixed(1)}/11. ${c.length?c.join(', ')+' : signaux d\'alerte.':''} Sensibilité : taux, rotation sectorielle, macro.</div>
-  <div class="stp"><strong>3. Allocation :</strong> ${a.length?'Cat. A ('+a.join(', ')+') → 60-70%.':''} ${b.length?'Cat. B ('+b.join(', ')+') → '+(a.length?'20-30':'70-80')+'%.':''} ${c.length?'Cat. C ('+c.join(', ')+') → 0-10% max.':''} Diversifier et réévaluer.</div>`;
-}
-
-// ============ MAIN ANALYSIS ============
-function analyze() {
-  $('err').classList.remove('on');
-
-  if (!T.length) {
-    $('err').textContent = '⚠️ Ajoutez au moins un ticker ci-dessus.';
-    $('err').classList.add('on');
-    return;
-  }
-
-  D = gather();
-
-  // Check if at least some data
-  const filled = D.some(d => FIELDS.some(f => d[f.k] !== null));
-  if (!filled) {
-    $('err').innerHTML = '⚠️ Remplissez au moins quelques ratios dans les formulaires ci-dessus.<br>👉 Trouvez-les facilement sur <a href="https://stockanalysis.com" target="_blank">stockanalysis.com</a>';
-    $('err').classList.add('on');
-    return;
-  }
-
-  // Render all 5 sections
-  renderS1(D);
-  renderS2(D);
-  renderS3(D);
-  renderS4(D);
-  renderS5(D);
-
-  $('res').classList.add('on');
-  $('res').scrollIntoView({ behavior: 'smooth' });
-}
-
-// ============ EXPORT CSV ============
-function toCSV() {
-  if (!D.length) return;
-  const h = 'Ticker,Secteur,P/E,PEG,ROE,Quick,D/E,Marge,EV/EBITDA,Couv,CrCA,FCF,Payout,Vert,Orange,Rouge';
-  const rows = D.map(d => {
-    const s = score(d);
-    return [d.ticker,d.sector,fmt('pe',d.pe),fmt('peg',d.peg),fmt('roe',d.roe),fmt('qr',d.qr),
-      fmt('de',d.de),fmt('nm',d.nm),fmt('eveb',d.eveb),fmt('ic',d.ic),fmt('rg',d.rg),
-      fmt('fcfy',d.fcfy),fmt('po',d.po),s.g,s.o,s.r].join(',');
+function calculateColors() {
+  const ticker = document.getElementById('tickerInput').value.toUpperCase();
+  const sector = document.getElementById('sector').value;
+  
+  const data = {
+    pe: { val: document.getElementById('pe').value, ...getColor('pe', document.getElementById('pe').value) },
+    peg: { val: document.getElementById('peg').value, ...getColor('peg', document.getElementById('peg').value) },
+    roe: { val: document.getElementById('roe').value, ...getColor('roe', document.getElementById('roe').value) },
+    quick: { val: document.getElementById('quick').value, ...getColor('quick', document.getElementById('quick').value) },
+    de: { val: document.getElementById('de').value, ...getColor('de', document.getElementById('de').value) },
+    margin: { val: document.getElementById('margin').value, ...getColor('margin', document.getElementById('margin').value) },
+    evebitda: { val: document.getElementById('evebitda').value, ...getColor('evebitda', document.getElementById('evebitda').value) },
+    coverage: { val: document.getElementById('coverage').value, ...getColor('coverage', document.getElementById('coverage').value) },
+    growth: { val: document.getElementById('growth').value, ...getColor('growth', document.getElementById('growth').value) },
+    fcf: { val: document.getElementById('fcf').value, ...getColor('fcf', document.getElementById('fcf').value) },
+    payout: { val: document.getElementById('payout').value, ...getColor('payout', document.getElementById('payout').value) }
+  };
+  
+  // Compter les scores
+  let v=0,o=0,r=0;
+  Object.values(data).forEach(d => {
+    if(d.code==='Vert') v++;
+    else if(d.code==='Orange') o++;
+    else r++;
   });
-  const blob = new Blob(['\uFEFF'+h+'\n'+rows.join('\n')], {type:'text/csv;charset=utf-8;'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `analyse_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
+  const score = `${v}V/${o}O/${r}R`;
+  
+  // Générer tableau HTML
+  let html = `<table>
+    <tr><th>Ticker</th><th>Secteur</th><th>P/E</th><th>PEG</th><th>ROE 5ans</th><th>Quick</th><th>Dette/Éq</th><th>Marge</th><th>EV/EBITDA</th><th>Couv.</th><th>Croiss.</th><th>FCF</th><th>Payout</th><th>Score</th></tr>
+    <tr>
+      <td>${ticker}</td>
+      <td>${sector}</td>
+      <td class="${data.pe.code.toLowerCase()}">${data.pe.val||'-'} ${data.pe.code}</td>
+      <td class="${data.peg.code.toLowerCase()}">${data.peg.val||'-'} ${data.peg.code}</td>
+      <td class="${data.roe.code.toLowerCase()}">${data.roe.val||'-'}% ${data.roe.code}</td>
+      <td class="${data.quick.code.toLowerCase()}">${data.quick.val||'-'} ${data.quick.code}</td>
+      <td class="${data.de.code.toLowerCase()}">${data.de.val||'-'} ${data.de.code}</td>
+      <td class="${data.margin.code.toLowerCase()}">${data.margin.val||'-'}% ${data.margin.code}</td>
+      <td class="${data.evebitda.code.toLowerCase()}">${data.evebitda.val||'-'} ${data.evebitda.code}</td>
+      <td class="${data.coverage.code.toLowerCase()}">${data.coverage.val||'-'} ${data.coverage.code}</td>
+      <td class="${data.growth.code.toLowerCase()}">${data.growth.val||'-'}% ${data.growth.code}</td>
+      <td class="${data.fcf.code.toLowerCase()}">${data.fcf.val||'-'}% ${data.fcf.code}</td>
+      <td class="${data.payout.code.toLowerCase()}">${data.payout.val||'-'}% ${data.payout.code}</td>
+      <td><strong>${score}</strong></td>
+    </tr>
+  </table>`;
+  
+  document.getElementById('tableOutput').innerHTML = html;
+  
+  // Générer Markdown
+  const date = new Date().toISOString().split('T')[0];
+  const md = `**ANALYSE FONDAMENTALE COMPLÈTE — ${ticker}** (${date})
+
+## 1. TABLEAU DES RATIOS CLÉS
+
+| Ticker | Secteur | P/E | PEG | ROE 5ans | Quick Ratio | Dette/Équité | Marge nette | EV/EBITDA | Couverture | Croiss. CA | FCF Yield | Payout | **Score** |
+|--------|---------|-----|-----|----------|-------------|--------------|-------------|-----------|------------|------------|-----------|--------|-----------|
+| ${ticker} | ${sector} | ${fmtMD(data.pe)} | ${fmtMD(data.peg)} | ${fmtMD(data.roe,'%')} | ${fmtMD(data.quick)} | ${fmtMD(data.de)} | ${fmtMD(data.margin,'%')} | ${fmtMD(data.evebitda)} | ${fmtMD(data.coverage)} | ${fmtMD(data.growth,'%')} | ${fmtMD(data.fcf,'%')} | ${fmtMD(data.payout,'%')} | **${score}** |
+
+*Sources: [Yahoo Finance](https://finance.yahoo.com/quote/${ticker}), [StockAnalysis](https://stockanalysis.com/stocks/${ticker.toLowerCase()})*
+
+## 2. VERDICT
+**Score global:** ${score}  
+${v >= 7 ? '✅ Profil qualité attractive' : v >= 4 ? '⚠️ Correct sans marge de sécurité' : '❌ Profil à risque'}
+
+## 3. CLASSEMENT
+${v >= 7 ? '**A. QUALITÉ** — À privilégier' : v >= 4 ? '**B. NEUTRE** — À surveiller' : '**C. ÉVITER** — Risque élevé'}`;
+  
+  document.getElementById('markdownOutput').textContent = md;
+  document.getElementById('resultCard').style.display = 'block';
 }
+
+function fmtMD(obj, unit='') {
+  if(!obj.val) return 'N/A';
+  return `${obj.val}${unit} ${obj.code}`;
+}
+
+function generateAnalysis() {
+  calculateColors();
+  document.getElementById('resultCard').scrollIntoView({behavior: 'smooth'});
+}
+
+function copyMarkdown() {
+  const text = document.getElementById('markdownOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('Markdown copié !'));
+}
+
+// Initialisation
+loadTradingView('AAPL');
 </script>
+
 </body>
 </html>
+
 
 
 
