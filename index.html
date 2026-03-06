@@ -1,298 +1,288 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyse Fondamentale - MAG7 & Co</title>
-    <style>
-        :root { --bg: #0b1220; --card: #0f1b33; --border: #233357; --text: #e7eefc; --accent: #1a3a6b; --green: #19c37d; --orange: #f59e0b; --red: #ef4444; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--text); padding: 20px; max-width: 1400px; margin: 0 auto; }
-        h1, h2 { color: #fff; margin-bottom: 10px; }
-        .container { display: flex; flex-direction: column; gap: 20px; }
-        
-        /* Ticker Cards */
-        .ticker-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; }
-        .ticker-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
-        .ticker-title { font-size: 1.2rem; font-weight: bold; color: #8ab4ff; }
-        
-        /* Grid Layout */
-        .ratio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-        .input-group { display: flex; flex-direction: column; gap: 5px; background: #0b1730; padding: 8px; border-radius: 6px; border: 1px solid #1e2d4a; }
-        .input-group label { font-size: 0.75rem; color: #a9b7d6; }
-        
-        input { background: #080f1d; border: 1px solid var(--border); color: #fff; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; }
-        input:focus { border-color: #8ab4ff; outline: none; }
-        
-        /* Links */
-        .source-links a { font-size: 0.8rem; color: #8ab4ff; text-decoration: none; margin-right: 10px; border: 1px solid #233357; padding: 2px 8px; border-radius: 4px; }
-        .source-links a:hover { background: var(--border); }
-
-        /* Buttons */
-        .actions { position: sticky; top: 10px; z-index: 100; background: var(--bg); padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; }
-        button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #234a86; }
-        button.copy { background: #198754; }
-
-        /* Markdown Output */
-        #output { background: #080f1d; padding: 20px; border-radius: 10px; border: 1px solid var(--border); white-space: pre-wrap; font-family: monospace; font-size: 0.9rem; color: #d1d5db; min-height: 200px; }
-        
-        .helper { font-size: 0.85rem; color: #6c757d; margin-top: 5px; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Analyse fondamentale — Multi-tickers (GitHub Pages)</title>
+  <style>
+    :root{--bg:#0b1220;--card:#0f1b33;--border:#233357;--text:#e7eefc;--muted:#a9b7d6;--accent:#1a3a6b;
+      --g:#19c37d;--o:#f59e0b;--r:#ef4444;--link:#8ab4ff;}
+    body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);margin:0}
+    .wrap{max-width:1300px;margin:22px auto;padding:0 14px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}
+    h1{font-size:18px;margin:0 0 10px}
+    h2{font-size:14px;margin:0 0 10px;color:var(--muted)}
+    input,button{background:#0b1730;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+    input{min-width:320px}
+    button{cursor:pointer;background:var(--accent);font-weight:650}
+    button:hover{background:#234a86}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .hint{font-size:12px;color:var(--muted);line-height:1.4}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+    .field{display:flex;flex-direction:column;gap:6px;background:#0b1730;border:1px solid #1e2d4a;border-radius:10px;padding:10px}
+    label{font-size:12px;color:var(--muted)}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    pre{white-space:pre-wrap;word-break:break-word;background:#0b1730;border:1px solid var(--border);border-radius:12px;padding:12px;margin:0}
+    .tickerHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .tickerTitle{font-weight:800;color:var(--link)}
+    .links a{font-size:12px;border:1px solid var(--border);padding:4px 8px;border-radius:999px;margin-right:6px}
+    .pill{display:inline-block;font-size:12px;color:var(--muted);border:1px solid var(--border);padding:2px 8px;border-radius:999px}
+  </style>
 </head>
 <body>
-
-    <div class="actions">
-        <h1>Analyse : NVDA, AAPL, GOOG, MSFT, AMZN</h1>
-        <div style="flex-grow:1"></div>
-        <button onclick="generateMarkdown()">⚡ Générer le Rapport Markdown</button>
-        <button class="copy" onclick="copyToClipboard()">📋 Copier</button>
+<div class="wrap">
+  <div class="card">
+    <h1>Analyse fondamentale complète — Générateur Markdown (sans API)</h1>
+    <div class="hint">
+      GitHub Pages ne peut pas récupérer automatiquement les chiffres. Vous collez les valeurs (TTM/dernier exercice) depuis les sources,
+      et la page calcule les couleurs + score + génère le Markdown.
     </div>
+  </div>
 
-    <div class="helper">
-        <strong>Mode d'emploi :</strong> Cliquez sur les liens "Source" pour chaque action. Copiez le chiffre (TTM) et collez-le dans la case. 
-        Le script s'occupe des couleurs, du formatage et des citations obligatoires.
-        <br><em>Format accepté : 12.5 ou 12,5 (le script nettoie les % et les x automatiquement).</em>
+  <div class="card">
+    <h2>1) Tickers à analyser</h2>
+    <div class="row">
+      <input id="tickers" value="NVDA, AAPL, GOOG, MSFT, AMZN" placeholder="Ex: TSLA, META, AMD" />
+      <button id="make">Créer les formulaires</button>
+      <button id="gen">Générer le rapport Markdown</button>
+      <button id="copy">Copier le Markdown</button>
     </div>
-
-    <div id="app" class="container">
-        <!-- Les cartes actions seront générées ici par JS -->
+    <div class="hint" style="margin-top:8px">
+      Sources rapides :
+      <a target="_blank" href="https://stockanalysis.com/">StockAnalysis</a> |
+      <a target="_blank" href="https://finance.yahoo.com/">Yahoo Finance</a> |
+      <a target="_blank" href="https://www.marketbeat.com/">MarketBeat</a>
+      <br>Format accepté dans les cases : <span class="pill">12.5</span> <span class="pill">12,5</span> <span class="pill">25%</span> <span class="pill">8x</span>
     </div>
+  </div>
 
-    <h2>Résultat Markdown (prêt à coller)</h2>
-    <div id="output">Le rapport apparaîtra ici...</div>
+  <div class="card">
+    <h2>2) Coller les données (valeurs + URLs)</h2>
+    <div id="forms" class="hint">Cliquez “Créer les formulaires”.</div>
+  </div>
+
+  <div class="card">
+    <h2>3) Rapport Markdown</h2>
+    <pre id="out">—</pre>
+  </div>
+</div>
 
 <script>
-    // === CONFIGURATION ===
-    const tickers = ['NVDA', 'AAPL', 'GOOG', 'MSFT', 'AMZN'];
-    
-    // Définition des champs et des seuils exacts
-    const fields = [
-        { id: 'pe', label: 'P/E Ratio', sourceSuffix: 'financials/ratios/', def: 'Yahoo/StockAnalysis' },
-        { id: 'peg', label: 'PEG Ratio', sourceSuffix: 'financials/ratios/', def: 'StockAnalysis' },
-        { id: 'roe', label: 'ROE 5ans (%)', sourceSuffix: 'financials/ratios/', def: 'StockAnalysis' },
-        { id: 'quick', label: 'Quick Ratio', sourceSuffix: 'financials/ratios/', def: 'StockAnalysis' },
-        { id: 'de', label: 'Dette/Équité', sourceSuffix: 'financials/ratios/', def: 'StockAnalysis' },
-        { id: 'margin', label: 'Marge Nette (%)', sourceSuffix: 'financials/', def: 'StockAnalysis' },
-        { id: 'evebitda', label: 'EV/EBITDA', sourceSuffix: 'financials/ratios/', def: 'StockAnalysis' },
-        { id: 'coverage', label: 'Couv. Intérêts', sourceSuffix: 'financials/ratios/', def: 'StockAnalysis' },
-        { id: 'growth', label: 'Croiss. CA (%)', sourceSuffix: 'financials/', def: 'StockAnalysis' },
-        { id: 'fcf', label: 'FCF Yield (%)', sourceSuffix: 'financials/cash-flow-statement/', def: 'StockAnalysis' },
-        { id: 'payout', label: 'Payout Ratio (%)', sourceSuffix: 'financials/ratios/', def: 'StockAnalysis' }
-    ];
+/* ---------- critères & seuils (stricts) ---------- */
+function grade(key, v){
+  if(v==null || Number.isNaN(v)) return {c:"Orange", msg:"donnée manquante"};
+  switch(key){
+    case "pe":        return v<=16?{c:"Vert",msg:"valorisation attractive"}:(v<20?{c:"Orange",msg:"valorisation acceptable"}:{c:"Rouge",msg:"valorisation élevée"});
+    case "peg":       return v<=1.0?{c:"Vert",msg:"qualité de croissance"}:(v<1.5?{c:"Orange",msg:"croissance correcte"}:{c:"Rouge",msg:"croissance chère/risquée"});
+    case "roe5y":     return v>=0.15?{c:"Vert",msg:"rentabilité élevée"}:(v>=0.10?{c:"Orange",msg:"rentabilité moyenne"}:{c:"Rouge",msg:"rentabilité faible"});
+    case "quick":     return v>=1.0?{c:"Vert",msg:"bonne liquidité CT"}:(v>=0.5?{c:"Orange",msg:"liquidité à surveiller"}:{c:"Rouge",msg:"liquidité faible"});
+    case "de":        return v<=0.5?{c:"Vert",msg:"endettement maîtrisé"}:(v<=1.0?{c:"Orange",msg:"endettement modéré"}:{c:"Rouge",msg:"endettement élevé"});
+    case "netMargin": return v>=0.10?{c:"Vert",msg:"profitabilité solide"}:(v>=0.05?{c:"Orange",msg:"profitabilité moyenne"}:{c:"Rouge",msg:"profitabilité faible"});
+    case "evEbitda":  return v<=8?{c:"Vert",msg:"valorisation attractive"}:(v<12?{c:"Orange",msg:"valorisation correcte"}:{c:"Rouge",msg:"valorisation élevée"});
+    case "intCov":    return v>=5?{c:"Vert",msg:"couverture confortable"}:(v>=3?{c:"Orange",msg:"couverture limite"}:{c:"Rouge",msg:"couverture faible"});
+    case "revCagr":   return v>=0.10?{c:"Vert",msg:"croissance forte"}:(v>=0.05?{c:"Orange",msg:"croissance modérée"}:{c:"Rouge",msg:"croissance faible"});
+    case "fcfYield":  return v>=0.08?{c:"Vert",msg:"cash attractif"}:(v>=0.04?{c:"Orange",msg:"cash correct"}:{c:"Rouge",msg:"cash faible"});
+    case "payout":
+      if(v>1.0) return {c:"Rouge",msg:"dividende non soutenable"};
+      if(v>=0.20 && v<=0.80) return {c:"Vert",msg:"payout soutenable"};
+      return {c:"Orange",msg:"prudence/tension"};
+    default: return {c:"Orange",msg:"-"};
+  }
+}
 
-    // === INITIALISATION ===
-    const app = document.getElementById('app');
+function parseNum(s){
+  if(s==null) return null;
+  let x = String(s).trim();
+  if(!x) return null;
+  x = x.replaceAll(" ", "").replaceAll("%","").replaceAll("x","").replaceAll("X","");
+  x = x.replaceAll(",", ".");
+  const v = Number(x);
+  return Number.isFinite(v) ? v : null;
+}
 
-    tickers.forEach(t => {
-        const html = `
-        <div class="ticker-card" id="card-${t}">
-            <div class="ticker-header">
-                <span class="ticker-title">${t}</span>
-                <div class="source-links">
-                    Ouvrir sources : 
-                    <a href="https://stockanalysis.com/stocks/${t.toLowerCase()}/financials/ratios/" target="_blank">Ratios</a>
-                    <a href="https://stockanalysis.com/stocks/${t.toLowerCase()}/financials/" target="_blank">Croissance/Marges</a>
-                    <a href="https://finance.yahoo.com/quote/${t}/key-statistics" target="_blank">Yahoo Stats</a>
-                </div>
-            </div>
-            <div class="ratio-grid">
-                <div class="input-group">
-                    <label>Secteur</label>
-                    <input type="text" id="${t}-sector" value="Technology" placeholder="Technology">
-                </div>
-                ${fields.map(f => `
-                <div class="input-group">
-                    <label>${f.label}</label>
-                    <input type="text" id="${t}-${f.id}" placeholder="0.0">
-                </div>
-                `).join('')}
-            </div>
-        </div>`;
-        app.insertAdjacentHTML('beforeend', html);
-    });
+function toRatioIfPercentKey(key, v){
+  // Pour les champs en %, l'utilisateur colle souvent 34 (=> 34%)
+  if(v==null) return null;
+  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key) && v>1.5) return v/100;
+  return v;
+}
 
-    // === LOGIQUE METIER (SEUILS) ===
-    function getColor(key, val) {
-        const v = parseFloat(val.toString().replace(',', '.').replace('%', '').replace('x', ''));
-        if (isNaN(v)) return { code: 'Orange', comment: 'N/A' };
+function fmt(key, v){
+  if(v==null) return "N/A";
+  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key)) return (v*100).toFixed(1)+"%";
+  if(["evEbitda","intCov"].includes(key)) return v.toFixed(1)+"x";
+  return v.toFixed(2);
+}
 
-        switch(key) {
-            case 'pe': // <=16 V, 16-20 O, >20 R
-                if(v <= 16) return { code: 'Vert', comment: 'valorisation attractive' };
-                if(v < 20) return { code: 'Orange', comment: 'valorisation acceptable' };
-                return { code: 'Rouge', comment: 'valorisation élevée' };
-            
-            case 'peg': // <=1 V, 1-1.5 O, >1.5 R
-                if(v <= 1.0) return { code: 'Vert', comment: 'croissance qualité' };
-                if(v < 1.5) return { code: 'Orange', comment: 'croissance correcte' };
-                return { code: 'Rouge', comment: 'croissance chère/risquée' };
+function cite(url, label="Source"){
+  if(!url || !url.trim()) return " [Source manquante]";
+  return ` [[${label}](${url.trim()})]`;
+}
 
-            case 'roe': // >=15 V, 10-15 O, <10 R
-                if(v >= 15) return { code: 'Vert', comment: 'rentabilité élevée' };
-                if(v >= 10) return { code: 'Orange', comment: 'rentabilité moyenne' };
-                return { code: 'Rouge', comment: 'rentabilité faible' };
+function score(colors){
+  let V=0,O=0,R=0;
+  for(const c of colors){ if(c==="Vert") V++; else if(c==="Orange") O++; else R++; }
+  return `${V}V/${O}O/${R}R`;
+}
 
-            case 'quick': // >=1 V, 0.5-1 O, <0.5 R
-                if(v >= 1.0) return { code: 'Vert', comment: 'bonne liquidité CT' };
-                if(v >= 0.5) return { code: 'Orange', comment: 'liquidité à surveiller' };
-                return { code: 'Rouge', comment: 'liquidité faible' };
+const METRICS = [
+  ["pe","P/E"],
+  ["peg","PEG"],
+  ["roe5y","ROE moyen 5 ans"],
+  ["quick","Quick Ratio"],
+  ["de","Dette/Équité"],
+  ["netMargin","Marge nette"],
+  ["evEbitda","EV/EBITDA"],
+  ["intCov","Couverture intérêts"],
+  ["revCagr","Croissance CA (%/an)"],
+  ["fcfYield","FCF Yield"],
+  ["payout","Payout Ratio"],
+];
 
-            case 'de': // <=0.5 V, 0.5-1 O, >1 R
-                if(v <= 0.5) return { code: 'Vert', comment: 'endettement maîtrisé' };
-                if(v <= 1.0) return { code: 'Orange', comment: 'endettement modéré' };
-                return { code: 'Rouge', comment: 'endettement élevé' };
+function sanitizeTickers(input){
+  return (input||"")
+    .split(",")
+    .map(s=>s.trim().toUpperCase())
+    .filter(Boolean);
+}
 
-            case 'margin': // >=10 V, 5-10 O, <5 R
-                if(v >= 10) return { code: 'Vert', comment: 'profitabilité solide' };
-                if(v >= 5) return { code: 'Orange', comment: 'profitabilité moyenne' };
-                return { code: 'Rouge', comment: 'profitabilité faible' };
+/* ---------- UI forms ---------- */
+function makeForms(){
+  const forms = document.getElementById("forms");
+  const tickers = sanitizeTickers(document.getElementById("tickers").value);
+  if(!tickers.length){ forms.textContent = "Ajoutez au moins 1 ticker."; return; }
 
-            case 'evebitda': // <=8 V, 8-12 O, >12 R
-                if(v <= 8) return { code: 'Vert', comment: 'valorisation attractive' };
-                if(v < 12) return { code: 'Orange', comment: 'valorisation correcte' };
-                return { code: 'Rouge', comment: 'valorisation élevée' };
+  forms.innerHTML = "";
+  for(const t of tickers){
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="tickerHeader">
+        <div><span class="tickerTitle">${t}</span> <span class="pill">valeur + URL source</span></div>
+        <div class="links">
+          <a target="_blank" href="https://stockanalysis.com/stocks/${t.toLowerCase()}/financials/ratios/">StockAnalysis Ratios</a>
+          <a target="_blank" href="https://stockanalysis.com/stocks/${t.toLowerCase()}/financials/">StockAnalysis Financials</a>
+          <a target="_blank" href="https://finance.yahoo.com/quote/${t}/key-statistics">Yahoo Statistics</a>
+          <a target="_blank" href="https://www.marketbeat.com/stocks/NASDAQ/${t}/financials/">MarketBeat</a>
+        </div>
+      </div>
 
-            case 'coverage': // >=5 V, 3-5 O, <3 R
-                if(v >= 5) return { code: 'Vert', comment: 'couverture confortable' };
-                if(v >= 3) return { code: 'Orange', comment: 'couverture limite' };
-                return { code: 'Rouge', comment: 'couverture faible' };
+      <div class="grid" style="margin-top:10px">
+        <div class="field">
+          <label>Secteur / Industrie</label>
+          <input data-t="${t}" data-k="sector" placeholder="Ex: Technology / Semiconductors" />
+        </div>
 
-            case 'growth': // >=10 V, 5-10 O, <5 R
-                if(v >= 10) return { code: 'Vert', comment: 'croissance forte' };
-                if(v >= 5) return { code: 'Orange', comment: 'croissance modérée' };
-                return { code: 'Rouge', comment: 'croissance faible' };
+        ${METRICS.map(([k,lab])=>`
+          <div class="field">
+            <label>${lab} — Valeur</label>
+            <input data-t="${t}" data-k="${k}" placeholder="Ex: 18.7, 25%, 12,5, 8x" />
+          </div>
+          <div class="field">
+            <label>${lab} — URL source (obligatoire)</label>
+            <input data-t="${t}" data-k="${k}_url" placeholder="https://..." />
+          </div>
+        `).join("")}
+      </div>
+    `;
+    forms.appendChild(card);
+  }
+}
 
-            case 'fcf': // >=8 V, 4-8 O, <4 R
-                if(v >= 8) return { code: 'Vert', comment: 'cash attractif' };
-                if(v >= 4) return { code: 'Orange', comment: 'cash correct' };
-                return { code: 'Rouge', comment: 'cash faible' };
+function getVal(t,k){
+  return document.querySelector(`[data-t="${t}"][data-k="${k}"]`)?.value ?? "";
+}
 
-            case 'payout': // 20-80 V, <20 or >80 O, >100 R
-                if(v > 100) return { code: 'Rouge', comment: 'non soutenable' };
-                if(v >= 20 && v <= 80) return { code: 'Vert', comment: 'soutenable' };
-                return { code: 'Orange', comment: 'prudent/tendu' };
-            
-            default: return { code: 'Orange', comment: '-' };
-        }
+function buildReport(){
+  const tickers = sanitizeTickers(document.getElementById("tickers").value);
+  if(!tickers.length) return "Aucun ticker.";
+
+  const today = new Date().toISOString().slice(0,10);
+
+  // Collect per ticker
+  const rows = [];
+  const bySector = new Map();
+  const verdicts = [];
+  const scoringForRanking = [];
+
+  for(const t of tickers){
+    const sector = (getVal(t,"sector").trim() || "N/A");
+    bySector.set(sector, [...(bySector.get(sector)||[]), t]);
+
+    const colors = [];
+    const cell = {};
+
+    for(const [k,lab] of METRICS){
+      let v = parseNum(getVal(t,k));
+      v = toRatioIfPercentKey(k,v);
+      const g = grade(k,v);
+      colors.push(g.c);
+      const url = getVal(t, k+"_url");
+      cell[k] = `${fmt(k,v)} ${g.c} - ${g.msg}${cite(url,"Source")}`;
     }
 
-    function formatVal(id, val) {
-        if(!val) return "N/A";
-        const clean = val.replace('%','').replace('x','').trim();
-        if(['roe','margin','growth','fcf','payout'].includes(id)) return clean + "%";
-        if(['pe','evebitda','coverage'].includes(id)) return clean + "x";
-        return clean;
-    }
+    const sg = score(colors);
+    rows.push(`| ${t} | ${sector} | ${cell.pe} | ${cell.peg} | ${cell.roe5y} | ${cell.quick} | ${cell.de} | ${cell.netMargin} | ${cell.evEbitda} | ${cell.intCov} | ${cell.revCagr} | ${cell.fcfYield} | ${cell.payout} | **${sg}** |`);
 
-    function generateMarkdown() {
-        const date = new Date().toISOString().split('T')[0];
-        let tableRows = [];
-        let details = [];
-        let rankings = { A: [], B: [], C: [] };
+    // red flags
+    const labels = ["P/E","PEG","ROE 5ans","Quick","Dette/Équité","Marge nette","EV/EBITDA","Couverture intérêts","Croiss. CA","FCF Yield","Payout"];
+    const reds = colors.map((c,i)=>({c,i})).filter(x=>x.c==="Rouge").map(x=>labels[x.i]);
 
-        tickers.forEach(t => {
-            const sector = document.getElementById(`${t}-sector`).value || "Technology";
-            let row = `| ${t} | ${sector} |`;
-            let scores = { V:0, O:0, R:0 };
-            let flags = [];
+    const V = colors.filter(x=>x==="Vert").length;
+    let concl = (V>=7) ? "Profil qualité attractive" : (reds.length>=3 ? "Spéculatif/cyclique" : "Correct sans marge sécurité");
 
-            // Traitement des champs
-            fields.forEach(f => {
-                const raw = document.getElementById(`${t}-${f.id}`).value;
-                const { code, comment } = getColor(f.id, raw);
-                
-                // Citation automatique (StockAnalysis par défaut)
-                const citeUrl = `https://stockanalysis.com/stocks/${t.toLowerCase()}/${f.sourceSuffix}`;
-                const citation = raw ? ` [[${f.def}](${citeUrl})]` : "";
-                
-                // Construction cellule tableau
-                row += ` ${formatVal(f.id, raw)} ${code} - ${comment}${citation} |`;
-                
-                // Comptage scores
-                if(code === 'Vert') scores.V++;
-                else if(code === 'Orange') scores.O++;
-                else { scores.R++; flags.push(f.label); }
-            });
+    verdicts.push(`**${t}** : ✅ Qualité (ROE/marges/bilan) à commenter. ✅ Valorisation (P/E, PEG, EV/EBITDA) à commenter. ✅ Points forts/vigilance. **CONCLUSION** : « ${concl} ». **Score** : ${sg} — **Drapeaux rouges** : ${reds.length?reds.join(", "):"Aucun"}.`);
 
-            const globalScore = `${scores.V}V/${scores.O}O/${scores.R}R`;
-            row += ` **${globalScore}** |`;
-            tableRows.push(row);
+    scoringForRanking.push({t, V, reds: reds.length, sg});
+  }
 
-            // Logique Verdict
-            let conclusion = "";
-            if(scores.V >= 7) { conclusion = "Profil qualité attractive"; rankings.A.push(t); }
-            else if(scores.R >= 3) { conclusion = "Profil spéculatif / À éviter"; rankings.C.push(t); }
-            else { conclusion = "Correct sans marge sécurité"; rankings.B.push(t); }
+  // Ranking (simple, règles fondamentaux)
+  const A = scoringForRanking.filter(x=>x.V>=7 && x.reds<=1);
+  const C = scoringForRanking.filter(x=>x.reds>=3);
+  const B = scoringForRanking.filter(x=>!A.includes(x) && !C.includes(x));
 
-            // Paragraphe individuel
-            details.push(`
-**${t}** : 
-✅ **Fondamentaux** : Analyse solide (Score ${globalScore}). La profitabilité est ${getColor('margin', document.getElementById(`${t}-margin`).value).comment}.
-✅ **Valorisation** : Le P/E est ${getColor('pe', document.getElementById(`${t}-pe`).value).comment}.
-✅ **Points de vigilance** : ${flags.length > 0 ? flags.join(', ') : "Aucun drapeau rouge majeur"}.
-✅ **CONCLUSION** : « ${conclusion} »
-✅ **Score** : ${globalScore} — **Drapeaux rouges** : ${flags.length > 0 ? flags.join(', ') : "Aucun"}`);
-        });
+  let md = `**ANALYSE FONDAMENTALE COMPLÈTE - ACTIONS**\n\n`;
+  md += `**TICKERS** : ${tickers.join(", ")}\n\n`;
+  md += `**Périmètre** : données saisies manuellement (TTM/dernier exercice) avec URLs sources. Date génération : ${today}.\n\n`;
 
-        // Construction Finale
-        const md = `**ANALYSE FONDAMENTALE COMPLÈTE - ACTIONS** (Données au ${date})
+  md += `---\n## 1. TABLEAU DES RATIOS CLÉS\n\n`;
+  md += `| Ticker | Secteur | P/E | PEG | ROE 5ans | Quick Ratio | Dette/Équité | Marge nette | EV/EBITDA | Couverture intérêts | Croiss. CA | FCF Yield | Payout | **Score global** |\n`;
+  md += `|--------|---------|-----|-----|----------|-------------|--------------|-------------|-----------|--------------------|------------|-----------|--------|------------------|\n`;
+  md += rows.join("\n") + "\n\n";
 
-Réalise une analyse fondamentale complète des actions suivantes :  
-**TICKERS** : ${tickers.join(', ')}
+  md += `---\n## 2. ANALYSE PAR SECTEUR\n`;
+  for(const [sec, list] of bySector.entries()){
+    md += `\n**${sec}** : ${list.join(", ")}\n- 1-2 phrases sur la dynamique actuelle : (à rédiger)\n- Position relative vs pairs : (à rédiger)\n- Mises en garde spécifiques : (à rédiger)\n`;
+  }
 
----
-## 1. TABLEAU DES RATIOS CLÉS
+  md += `\n---\n## 3. VERDICT INDIVIDUEL\n\n` + verdicts.join("\n\n") + "\n\n";
 
-| Ticker | Secteur | P/E | PEG | ROE 5ans | Quick Ratio | Dette/Équité | Marge nette | EV/EBITDA | Couv. intérêts | Croiss. CA | FCF Yield | Payout | **Score global** |
-|--------|---------|-----|-----|----------|-------------|--------------|-------------|-----------|----------------|------------|-----------|--------|------------------|
-${tableRows.join('\n')}
+  md += `---\n## 4. CLASSEMENT GLOBAL (fondamentaux uniquement)\n\n`;
+  md += `**A. QUALITÉ - À PRIVILÉGIER**\n` + (A.length ? A.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+  md += `**B. NEUTRE - À SURVEILLER**\n` + (B.length ? B.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+  md += `**C. ÉVITER**\n` + (C.length ? C.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
 
----
+  md += `---\n## 5. RÉSUMÉ FINAL\n`;
+  md += `1. Actions recommandées + potentiel sectoriel : (à rédiger)\n`;
+  md += `2. Risque global panier : (à rédiger)\n`;
+  md += `3. Logique allocation : (à rédiger)\n`;
 
-## 2. ANALYSE PAR SECTEUR
-**Secteur Technology (Majoritaire)**
-- Le secteur montre une résilience forte avec des marges nettes élevées pour les leaders.
-- Position relative : NVDA domine la croissance, MSFT/AAPL la stabilité des cash-flows.
-- Vigilance : Valorisations élevées sensibles aux taux d'intérêts.
+  return md;
+}
 
----
-
-## 3. VERDICT INDIVIDUEL
-${details.join('\n\n')}
-
----
-
-## 4. CLASSEMENT GLOBAL (Fondamentaux)
-
-**A. QUALITÉ - À PRIVILÉGIER**
-${rankings.A.length ? rankings.A.map(x => `• ${x} : Leader solide avec score élevé.`).join('\n') : '• Aucun'}
-
-**B. NEUTRE - À SURVEILLER**
-${rankings.B.length ? rankings.B.map(x => `• ${x} : Valorisation tendue ou croissance ralentie.`).join('\n') : '• Aucun'}
-
-**C. ÉVITER / SPÉCULATIF**
-${rankings.C.length ? rankings.C.map(x => `• ${x} : Trop de drapeaux rouges ou survalorisation extrême.`).join('\n') : '• Aucun'}
-
----
-
-## 5. RÉSUMÉ FINAL
-
-1. **Actions recommandées** : Privilégier les titres en catégorie A pour le fond de portefeuille.
-2. **Risque global** : Concentration technologique élevée. Attention à la cyclicité des semi-conducteurs (NVDA).
-3. **Allocation** : Suggérée 60% Qualité (Cat A), 30% Neutre (Cat B), 10% Cash.
-`;
-
-        document.getElementById('output').textContent = md;
-    }
-
-    function copyToClipboard() {
-        const text = document.getElementById('output').textContent;
-        navigator.clipboard.writeText(text).then(() => alert('Analyse Markdown copiée !'));
-    }
+/* ---------- events ---------- */
+document.getElementById("make").addEventListener("click", makeForms);
+document.getElementById("gen").addEventListener("click", ()=>{
+  document.getElementById("out").textContent = buildReport();
+});
+document.getElementById("copy").addEventListener("click", async ()=>{
+  await navigator.clipboard.writeText(document.getElementById("out").textContent);
+});
 </script>
-
 </body>
 </html>
+
 
 
 
