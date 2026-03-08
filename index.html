@@ -12,7 +12,6 @@
             font-family: -apple-system, 'Inter', 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* === DESIGN SYSTEM TRADINGVIEW === */
         :root {
             --bg-primary: #131722;
             --bg-surface: #1e222d;
@@ -39,7 +38,6 @@
             margin: 0 auto;
         }
 
-        /* === COMPOSANTS === */
         .card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
@@ -64,13 +62,6 @@
             color: white;
         }
 
-        .card-header h2 span {
-            color: var(--green);
-            font-size: 14px;
-            margin-left: 8px;
-        }
-
-        /* === HEADER RECHERCHE === */
         .header {
             display: flex;
             flex-wrap: wrap;
@@ -166,6 +157,7 @@
             display: flex;
             gap: 10px;
             font-size: 13px;
+            flex-wrap: wrap;
         }
 
         .examples span {
@@ -181,7 +173,26 @@
             background: #2f3545;
         }
 
-        /* === TABLEAU RATIOS === */
+        .api-status {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-status.ok {
+            border-left: 4px solid var(--green);
+        }
+
+        .api-status.warning {
+            border-left: 4px solid var(--orange);
+        }
+
         .table-wrapper {
             overflow-x: auto;
             border-radius: 6px;
@@ -222,7 +233,6 @@
             background: #262e3d;
         }
 
-        /* === BADGES COULEUR === */
         .badge {
             display: inline-block;
             padding: 4px 8px;
@@ -255,7 +265,6 @@
             font-size: 12px;
         }
 
-        /* === GRILLE SECTEURS === */
         .sector-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -277,7 +286,6 @@
             margin-bottom: 12px;
         }
 
-        /* === VERDICTS === */
         .verdict-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -313,7 +321,6 @@
             border-radius: 4px;
         }
 
-        /* === CLASSEMENT === */
         .rank-box {
             padding: 16px;
             margin: 12px 0;
@@ -335,7 +342,6 @@
             border-left: 4px solid var(--red); 
         }
 
-        /* === UTILS === */
         .text-green { color: var(--green); }
         .text-red { color: var(--red); }
         .text-orange { color: var(--orange); }
@@ -404,6 +410,11 @@
             </div>
         </div>
 
+        <!-- STATUT API (important pour savoir si la clé est chargée) -->
+        <div id="apiStatus" class="api-status warning">
+            <span>🔑 Vérification de la clé API FMP...</span>
+        </div>
+
         <!-- ZONE RÉSULTATS DYNAMIQUE -->
         <div id="results">
             <div class="loading">
@@ -419,9 +430,17 @@
     </div>
 
     <script>
-        // ==================== CONFIGURATION ====================
-        // 🔑 REMPLACEZ PAR VOTRE CLÉ API FMP
-        const FMP_API_KEY = "VOTRE_CLE_API_FMP_ICI";  // À MODIFIER
+        // ==================== CONFIGURATION SÉCURISÉE ====================
+        // La clé API est lue depuis l'environnement Vercel (variable FMP_API_KEY)
+        // Sur Vercel, elle est injectée automatiquement
+        // En local, on peut utiliser un fichier .env.local ou les données mock
+        
+        // Détection de l'environnement
+        const isVercel = window.location.hostname.includes('vercel.app');
+        
+        // Récupération de la clé API depuis l'environnement Vercel
+        // Note: En local, cette variable sera undefined
+        const FMP_API_KEY = window.FMP_API_KEY || '{{VERCEL_ENV_FMP_API_KEY}}' || '';
         
         // Liste des top 50 tickers pour l'autocomplétion
         const TOP_TICKERS = [
@@ -432,7 +451,7 @@
             "MCD", "MDT", "DHR", "NEE", "QCOM", "TXN", "HON", "AMGN", "UNP", "BA"
         ];
 
-        // DONNÉES DE DÉMONSTRATION (mock)
+        // DONNÉES DE DÉMONSTRATION (mock) enrichies
         const MOCK_DATA = {
             "NVDA": { 
                 sector: "Technology", name: "NVIDIA Corp", 
@@ -507,13 +526,81 @@
         }
 
         function formatValue(value, criterion) {
+            if (value === undefined || value === null) return 'N/A';
             return criterion.percent ? value.toFixed(1) + '%' : value.toFixed(1);
         }
 
-        // ==================== API FMP (MODULABLE) ====================
+        // ==================== VÉRIFICATION STATUT API ====================
+        function checkApiStatus() {
+            const statusDiv = document.getElementById('apiStatus');
+            const hasValidKey = FMP_API_KEY && 
+                               FMP_API_KEY !== '{{VERCEL_ENV_FMP_API_KEY}}' && 
+                               FMP_API_KEY.length > 10;
+            
+            if (hasValidKey) {
+                statusDiv.className = 'api-status ok';
+                statusDiv.innerHTML = `
+                    <span>✅ Clé API FMP chargée depuis l'environnement Vercel</span>
+                    <span style="color: var(--text-secondary);">(mode production)</span>
+                `;
+            } else {
+                statusDiv.className = 'api-status warning';
+                statusDiv.innerHTML = `
+                    <span>⚠️ Mode démonstration - Données simulées</span>
+                    <span style="color: var(--text-secondary);">
+                        ${isVercel ? 'Ajoutez FMP_API_KEY dans les variables d\'environnement Vercel' : 'API non configurée'}
+                    </span>
+                `;
+            }
+            return hasValidKey;
+        }
+
+        // ==================== AUTOCOMPLÉTION ====================
+        const searchInput = document.getElementById('searchInput');
+        const autocompleteDiv = document.getElementById('autocomplete');
+
+        searchInput.addEventListener('input', function() {
+            const input = this.value.toUpperCase();
+            if (input.length < 1) {
+                autocompleteDiv.style.display = 'none';
+                return;
+            }
+
+            const matches = TOP_TICKERS.filter(t => t.includes(input)).slice(0, 10);
+            
+            if (matches.length > 0) {
+                autocompleteDiv.innerHTML = matches.map(t => 
+                    `<div class="autocomplete-item" onclick="selectTicker('${t}')">${t}</div>`
+                ).join('');
+                autocompleteDiv.style.display = 'block';
+            } else {
+                autocompleteDiv.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!autocompleteDiv.contains(e.target) && e.target !== searchInput) {
+                autocompleteDiv.style.display = 'none';
+            }
+        });
+
+        window.selectTicker = function(ticker) {
+            const current = searchInput.value.split(',').map(t => t.trim().toUpperCase());
+            if (!current.includes(ticker)) {
+                current.push(ticker);
+                searchInput.value = current.join(', ');
+            }
+            autocompleteDiv.style.display = 'none';
+        };
+
+        // ==================== API FMP (AVEC FALLBACK MOCK) ====================
         async function fetchTickerData(ticker) {
+            const hasValidKey = FMP_API_KEY && 
+                               FMP_API_KEY !== '{{VERCEL_ENV_FMP_API_KEY}}' && 
+                               FMP_API_KEY.length > 10;
+
             // Si clé API valide, appeler l'API réelle
-            if (FMP_API_KEY && FMP_API_KEY !== "VOTRE_CLE_API_FMP_ICI" && FMP_API_KEY.length > 10) {
+            if (hasValidKey) {
                 try {
                     // Profile pour les infos de base
                     const profileUrl = `https://financialmodelingprep.com/api/v3/profile/${ticker}?apikey=${FMP_API_KEY}`;
@@ -535,7 +622,7 @@
                             sector: profile[0].sector || "N/A",
                             name: profile[0].companyName || ticker,
                             pe: profile[0].pe || 20,
-                            peg: 1.5, // À calculer avec growth
+                            peg: 1.5,
                             roe5: (ratios[0]?.returnOnEquityTTM * 100) || 15,
                             quick: ratios[0]?.quickRatioTTM || 1.2,
                             de: ratios[0]?.debtEquityRatioTTM || 0.8,
@@ -665,9 +752,79 @@
                     html += `<p class="text-green">💰 Secteur bancaire, P/E modérés</p>`;
                 } else if (sector.includes('Consumer')) {
                     html += `<p class="text-orange">🛍️ Dépendant de la consommation</p>`;
+                } else if (sector.includes('Communication')) {
+                    html += `<p class="text-orange">📱 Médias et tech, croissance variable</p>`;
                 }
                 html += `</div>`;
+            }
+            html += `</div></div>`;
+
+            // 3. VERDICT INDIVIDUEL
+            html += `<div class="card">`;
+            html += `<div class="card-header"><h2>📌 VERDICT INDIVIDUEL</h2></div>`;
+            html += `<div class="verdict-grid">`;
+
+            for (let ticker of tickers) {
+                const d = dataMap[ticker];
+                let green = 0, orange = 0, red = 0;
+                const rougeList = [];
+                
+                CRITERIA.forEach(c => {
+                    const rating = getRating(c, d[c.key] || 0);
+                    if (rating === 'green') green++;
+                    else if (rating === 'orange') orange++;
+                    else {
+                        red++;
+                        rougeList.push(c.name);
+                    }
+                });
+
+                html += `<div class="verdict-card">`;
+                html += `<div class="verdict-header">`;
+                html += `<span class="verdict-ticker">${ticker}</span>`;
+                html += `<span class="score-badge">${green}V/${orange}O/${red}R</span>`;
+                html += `</div>`;
+                
+                html += `<p><span class="text-green">✓</span> ROE ${d.roe5.toFixed(1)}% · Marge ${d.margin.toFixed(1)}% · Int. Cover ${d.intCover.toFixed(1)}x</p>`;
+                html += `<p><span class="text-orange">⚖️</span> P/E ${d.pe.toFixed(1)} · PEG ${d.peg.toFixed(2)} · EV/EBITDA ${d.evEbitda.toFixed(1)}</p>`;
+                
+                let conclusion = green >= 8 ? 'Profil qualité attractive' : (green >= 5 ? 'Correct sans marge sécurité' : 'Spéculatif/cyclique');
+                html += `<p><strong>CONCLUSION:</strong> ${conclusion}</p>`;
+                
+                if (rougeList.length) {
+                    html += `<div class="flag-red"><span class="text-red">🚩 Drapeaux rouges:</span> ${rougeList.join(', ')}</div>`;
+                } else {
+                    html += `<div class="flag-red" style="background:#1a2e2a;"><span class="text-green">✅ Aucun drapeau rouge</span></div>`;
+                }
+                html += `</div>`;
+            }
+            html += `</div></div>`;
+
+            // 4. CLASSEMENT AUTOMATIQUE
+            const ranked = { A: [], B: [], C: [] };
+            
+            for (let ticker of tickers) {
+                let green = 0, red = 0;
+                CRITERIA.forEach(c => {
+                    const rating = getRating(c, dataMap[ticker][c.key] || 0);
+                    if (rating === 'green') green++;
+                    else if (rating === 'red') red++;
+                });
+                
+                if (green >= 8 && red <= 1) ranked.A.push(ticker);
+                else if (red >= 3) ranked.C.push(ticker);
+                else ranked.B.push(ticker);
+            }
+
+            html += `<div class="card">`;
+            html += `<div class="card-header"><h2>📊 CLASSEMENT GLOBAL</h2></div>`;
+            
+            if (ranked.A.length) {
+                html += `<div class="rank-box rank-a">`;
+                html += `<strong>🟢 QUALITÉ - À PRIVILÉGIER</strong><br>`;
+                html += ranked.A.map
            
+
 
 
 
