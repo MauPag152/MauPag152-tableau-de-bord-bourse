@@ -1,829 +1,505 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradingView Style · Analyse Fondamentale</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, 'Inter', 'Segoe UI', Roboto, sans-serif;
-        }
-
-        :root {
-            --bg-primary: #131722;
-            --bg-surface: #1e222d;
-            --bg-surface-light: #2a2e39;
-            --border-color: #2a2e39;
-            --text-primary: #d1d4dc;
-            --text-secondary: #5d6b82;
-            --green: #089981;
-            --red: #f23645;
-            --orange: #ffb700;
-            --blue: #4c6ef5;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            padding: 20px;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-
-        .card-header h2 {
-            font-size: 20px;
-            font-weight: 500;
-            color: white;
-        }
-
-        .header {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
-        }
-
-        .title h1 {
-            font-size: 28px;
-            font-weight: 500;
-            letter-spacing: -0.5px;
-        }
-
-        .title h1 small {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 400;
-            margin-left: 10px;
-        }
-
-        .search-section {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 8px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 4px;
-            width: 400px;
-        }
-
-        .search-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-size: 15px;
-            padding: 10px 15px;
-            outline: none;
-        }
-
-        .search-box input::placeholder {
-            color: #3a4050;
-        }
-
-        .search-box button {
-            background: var(--green);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 14px;
-        }
-
-        .search-box button:hover {
-            background: #0ab58f;
-        }
-
-        .autocomplete {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            max-height: 300px;
-            overflow-y: auto;
-            width: 400px;
-            display: none;
-            position: absolute;
-            z-index: 1000;
-            margin-top: 2px;
-        }
-
-        .autocomplete-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .autocomplete-item:hover {
-            background: var(--bg-surface-light);
-        }
-
-        .examples {
-            display: flex;
-            gap: 10px;
-            font-size: 13px;
-            flex-wrap: wrap;
-        }
-
-        .examples span {
-            color: var(--blue);
-            cursor: pointer;
-            background: #262b38;
-            padding: 5px 15px;
-            border-radius: 20px;
-            transition: 0.2s;
-        }
-
-        .examples span:hover {
-            background: #2f3545;
-        }
-
-        .api-status {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .api-status.ok {
-            border-left: 4px solid var(--green);
-        }
-
-        .api-status.warning {
-            border-left: 4px solid var(--orange);
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 6px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            min-width: 1300px;
-        }
-
-        th {
-            background: #1a1e2a;
-            color: var(--text-secondary);
-            font-weight: 500;
-            padding: 14px 8px;
-            white-space: nowrap;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        td {
-            padding: 12px 8px;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        td:first-child, th:first-child {
-            position: sticky;
-            left: 0;
-            background: var(--bg-surface);
-            font-weight: 600;
-            color: white;
-            z-index: 10;
-        }
-
-        tr:hover td {
-            background: #262e3d;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 12px;
-            min-width: 50px;
-        }
-
-        .badge.green { 
-            background: rgba(8, 153, 129, 0.15); 
-            color: var(--green);
-        }
-        
-        .badge.orange { 
-            background: rgba(255, 183, 0, 0.15); 
-            color: var(--orange);
-        }
-        
-        .badge.red { 
-            background: rgba(242, 54, 69, 0.15); 
-            color: var(--red);
-        }
-
-        .score-badge {
-            background: #2f3545;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 12px;
-        }
-
-        .sector-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 18px;
-            margin: 20px 0;
-        }
-
-        .sector-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 18px;
-        }
-
-        .sector-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 12px;
-        }
-
-        .verdict-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .verdict-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 18px;
-        }
-
-        .verdict-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .verdict-ticker {
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-        }
-
-        .flag-red {
-            background: rgba(242, 54, 69, 0.1);
-            border-left: 3px solid var(--red);
-            padding: 10px 12px;
-            margin-top: 15px;
-            border-radius: 4px;
-        }
-
-        .rank-box {
-            padding: 16px;
-            margin: 12px 0;
-            border-radius: 10px;
-        }
-
-        .rank-a { 
-            background: rgba(8, 153, 129, 0.1); 
-            border-left: 4px solid var(--green); 
-        }
-        
-        .rank-b { 
-            background: rgba(255, 183, 0, 0.1); 
-            border-left: 4px solid var(--orange); 
-        }
-        
-        .rank-c { 
-            background: rgba(242, 54, 69, 0.1); 
-            border-left: 4px solid var(--red); 
-        }
-
-        .text-green { color: var(--green); }
-        .text-red { color: var(--red); }
-        .text-orange { color: var(--orange); }
-        .text-gray { color: var(--text-secondary); }
-        
-        .tooltip {
-            position: relative;
-            cursor: help;
-        }
-
-        .tooltip:hover:after {
-            content: attr(data-tooltip);
-            position: absolute;
-            background: #2f3545;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1000;
-            margin-left: 10px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px;
-            background: var(--bg-surface);
-            border-radius: 12px;
-            color: var(--text-secondary);
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Multi-actions — TradingView + Analyse fondamentale (seuils)</title>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#0f1b33; --text:#e7eefc; --muted:#a9b7d6;
+      --border:#233357; --accent:#1a3a6b; --link:#8ab4ff;
+      --g:#19c37d; --o:#f59e0b; --r:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, Segoe UI, Arial, sans-serif;
+    }
+    body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans)}
+    .wrap{max-width:1350px;margin:20px auto;padding:0 14px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}
+    h1{font-size:18px;margin:0 0 10px}
+    h2{font-size:14px;margin:0 0 10px;color:var(--muted)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input,button,select,textarea{background:#0b1730;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+    input,select{font-family:var(--mono)}
+    textarea{width:100%;min-height:76px;font-family:var(--mono)}
+    button{cursor:pointer;background:var(--accent);font-weight:650}
+    button:hover{background:#234a86}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .hint{font-size:12px;color:var(--muted);line-height:1.4}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+    .field{background:#0b1730;border:1px solid #1e2d4a;border-radius:12px;padding:10px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .tv{height:520px}
+    pre{white-space:pre-wrap;word-break:break-word;background:#0b1730;border:1px solid var(--border);border-radius:12px;padding:12px;margin:0;font-family:var(--mono);font-size:12.5px}
+    .badge{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted)}
+    .g{color:var(--g);font-weight:800}
+    .o{color:var(--o);font-weight:800}
+    .r{color:var(--r);font-weight:800}
+    .sticky{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:3}
+    .split{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 980px){ .split{grid-template-columns:1.1fr .9fr;} }
+    .miniBtn{padding:8px 10px;font-size:13px}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- EN-TÊTE AVEC RECHERCHE -->
-        <div class="header">
-            <div class="title">
-                <h1>📊 ANALYSE FONDAMENTALE COMPLÈTE <small>· actions</small></h1>
-                <div style="color: var(--text-secondary); margin-top: 5px; font-size: 13px;">
-                    Données TTM · Financial Modeling Prep
-                </div>
-            </div>
-            
-            <div class="search-section">
-                <div style="position: relative;">
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Ex: NVDA, AAPL, GOOG, MSFT, AMZN" value="NVDA,AAPL,MSFT,GOOG,AMZN">
-                        <button id="analyzeBtn">Analyser</button>
-                    </div>
-                    <div id="autocomplete" class="autocomplete"></div>
-                </div>
-                
-                <div class="examples">
-                    <span onclick="loadExample('NVDA,AAPL,MSFT,GOOG,AMZN')">🇺🇸 Mega-cap</span>
-                    <span onclick="loadExample('TSLA,META,NFLX,PYPL,ADBE')">📈 Technologie</span>
-                    <span onclick="loadExample('JPM,GS,MS,BAC,C')">🏦 Banques</span>
-                    <span onclick="loadExample('PFE,JNJ,MRK,ABBV,LLY')">💊 Santé</span>
-                    <span onclick="loadExample('XOM,CVX,COP,EOG,SLB')">🛢️ Énergie</span>
-                </div>
-            </div>
-        </div>
+<div class="wrap">
 
-        <!-- STATUT API (important pour savoir si la clé est chargée) -->
-        <div id="apiStatus" class="api-status warning">
-            <span>🔑 Vérification de la clé API FMP...</span>
-        </div>
-
-        <!-- ZONE RÉSULTATS DYNAMIQUE -->
-        <div id="results">
-            <div class="loading">
-                <div style="font-size: 18px; margin-bottom: 10px;">⚡ Entrez des symboles et cliquez sur Analyser</div>
-                <div style="color: #3a4050;">Données de démonstration incluses si API non disponible</div>
-            </div>
-        </div>
-
-        <!-- FOOTER -->
-        <div style="color: var(--text-secondary); font-size: 12px; text-align: right; margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-            Design TradingView · Seuils d'analyse fondamentaux · Données 2025-2026
-        </div>
+  <div class="sticky">
+    <div class="row">
+      <div style="font-weight:800">Multi-actions — TradingView + Analyse (seuils Vert/Orange/Rouge)</div>
+      <div style="flex:1"></div>
+      <button id="genAll">Générer Markdown (tous)</button>
+      <button id="copy">Copier Markdown</button>
     </div>
+  </div>
 
-    <script>
-        // ==================== CONFIGURATION SÉCURISÉE ====================
-        // La clé API est lue depuis l'environnement Vercel (variable FMP_API_KEY)
-        // Sur Vercel, elle est injectée automatiquement
-        // En local, on peut utiliser un fichier .env.local ou les données mock
-        
-        // Détection de l'environnement
-        const isVercel = window.location.hostname.includes('vercel.app');
-        
-        // Récupération de la clé API depuis l'environnement Vercel
-        // Note: En local, cette variable sera undefined
-        const FMP_API_KEY = window.FMP_API_KEY || '{{VERCEL_ENV_FMP_API_KEY}}' || '';
-        
-        // Liste des top 50 tickers pour l'autocomplétion
-        const TOP_TICKERS = [
-            "NVDA", "AAPL", "MSFT", "GOOG", "AMZN", "META", "TSLA", "BRK.B", "JPM", "V",
-            "JNJ", "WMT", "PG", "UNH", "HD", "DIS", "MA", "PYPL", "BAC", "NFLX",
-            "ADBE", "CMCSA", "XOM", "VZ", "KO", "PFE", "INTC", "T", "PEP", "CSCO",
-            "MRK", "ABBV", "CVX", "WFC", "CRM", "ABT", "NKE", "TMO", "COST", "AVGO",
-            "MCD", "MDT", "DHR", "NEE", "QCOM", "TXN", "HON", "AMGN", "UNP", "BA"
-        ];
+  <div class="card">
+    <h1>1) Liste de tickers (multi-actions)</h1>
+    <div class="hint">
+      Entrez une liste séparée par virgules. Formats acceptés : <span class="badge">AAPL</span> ou <span class="badge">NASDAQ:AAPL</span>.
+      <br>Ensuite, choisissez un ticker dans la liste déroulante pour afficher le graphique TradingView et remplir les ratios de CE ticker.
+    </div>
+    <div class="row" style="margin-top:10px">
+      <textarea id="tickersInput">NASDAQ:NVDA, NASDAQ:AAPL, NASDAQ:GOOG, NASDAQ:MSFT, NASDAQ:AMZN</textarea>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="apply">Appliquer la liste</button>
+      <span class="badge">GitHub Pages: OK (sans API)</span>
+    </div>
+  </div>
 
-        // DONNÉES DE DÉMONSTRATION (mock) enrichies
-        const MOCK_DATA = {
-            "NVDA": { 
-                sector: "Technology", name: "NVIDIA Corp", 
-                pe: 28.4, peg: 1.1, roe5: 43.2, quick: 3.1, de: 0.4, 
-                margin: 48.7, evEbitda: 32, intCover: 32, growth: 65, 
-                fcfYield: 1.2, payout: 2 
-            },
-            "AAPL": { 
-                sector: "Technology", name: "Apple Inc",
-                pe: 31.2, peg: 1.8, roe5: 147.0, quick: 0.9, de: 1.5, 
-                margin: 26.3, evEbitda: 23, intCover: 29, growth: 8, 
-                fcfYield: 3.5, payout: 16 
-            },
-            "MSFT": { 
-                sector: "Technology", name: "Microsoft Corp",
-                pe: 33.1, peg: 1.6, roe5: 43.5, quick: 1.5, de: 0.5, 
-                margin: 35.6, evEbitda: 22, intCover: 38, growth: 14, 
-                fcfYield: 2.8, payout: 28 
-            },
-            "GOOG": { 
-                sector: "Communication", name: "Alphabet Inc",
-                pe: 23.5, peg: 1.2, roe5: 25.1, quick: 2.2, de: 0.1, 
-                margin: 23.8, evEbitda: 14, intCover: 110, growth: 11, 
-                fcfYield: 4.3, payout: 0 
-            },
-            "AMZN": { 
-                sector: "Consumer Cyclical", name: "Amazon.com Inc",
-                pe: 42.0, peg: 1.9, roe5: 19.4, quick: 0.7, de: 0.6, 
-                margin: 7.2, evEbitda: 19, intCover: 8, growth: 11, 
-                fcfYield: 2.1, payout: 0 
-            },
-            "TSLA": { 
-                sector: "Consumer Cyclical", name: "Tesla Inc",
-                pe: 68.5, peg: 2.5, roe5: 25.0, quick: 1.1, de: 0.2, 
-                margin: 8.1, evEbitda: 42, intCover: 15, growth: 25, 
-                fcfYield: 0.9, payout: 0 
-            },
-            "META": { 
-                sector: "Communication", name: "Meta Platforms",
-                pe: 25.7, peg: 1.3, roe5: 22.4, quick: 2.6, de: 0.2, 
-                margin: 29.6, evEbitda: 12, intCover: 45, growth: 16, 
-                fcfYield: 5.5, payout: 0 
-            },
-            "JPM": { 
-                sector: "Financial", name: "JPMorgan Chase",
-                pe: 11.8, peg: 1.4, roe5: 15.0, quick: 0.9, de: 2.7, 
-                margin: 31.2, evEbitda: 9, intCover: 4, growth: 6, 
-                fcfYield: 12, payout: 40 
-            }
-        };
+  <div class="card">
+    <h1>2) Sélection de l’action (un seul TradingView)</h1>
+    <div class="row">
+      <label class="badge" style="border-style:dashed">Ticker actif</label>
+      <select id="tickerSelect"></select>
+      <button id="loadTv" class="miniBtn">Charger TradingView</button>
+      <button id="openLinks" class="miniBtn">Ouvrir sources</button>
+      <span id="activeInfo" class="badge">—</span>
+    </div>
+    <div class="hint" style="margin-top:8px">
+      Les ratios restent enregistrés dans votre navigateur (localStorage) pour chaque ticker.
+    </div>
+  </div>
 
-        // CRITÈRES D'ANALYSE AVEC SEUILS
-        const CRITERIA = [
-            { name: "P/E", key: "pe", green: v => v <= 16, orange: v => v > 16 && v < 20, red: v => v >= 20 },
-            { name: "PEG", key: "peg", green: v => v <= 1.0, orange: v => v > 1.0 && v < 1.5, red: v => v >= 1.5 },
-            { name: "ROE 5y", key: "roe5", green: v => v >= 15, orange: v => v >= 10 && v < 15, red: v => v < 10, percent: true },
-            { name: "Quick", key: "quick", green: v => v >= 1.0, orange: v => v >= 0.5 && v < 1.0, red: v => v < 0.5 },
-            { name: "D/E", key: "de", green: v => v <= 0.5, orange: v => v > 0.5 && v <= 1.0, red: v => v > 1.0 },
-            { name: "Marge %", key: "margin", green: v => v >= 10, orange: v => v >= 5 && v < 10, red: v => v < 5, percent: true },
-            { name: "EV/EBITDA", key: "evEbitda", green: v => v <= 8, orange: v => v > 8 && v < 12, red: v => v >= 12 },
-            { name: "Int Cover", key: "intCover", green: v => v >= 5, orange: v => v >= 3 && v < 5, red: v => v < 3 },
-            { name: "Croiss. CA", key: "growth", green: v => v >= 10, orange: v => v >= 5 && v < 10, red: v => v < 5, percent: true },
-            { name: "FCF Yield", key: "fcfYield", green: v => v >= 8, orange: v => v >= 4 && v < 8, red: v => v < 4, percent: true },
-            { name: "Payout", key: "payout", green: v => v >= 20 && v <= 80, orange: v => (v < 20 && v > 0) || (v > 80 && v <= 100), red: v => v > 100, percent: true }
-        ];
+  <div class="card">
+    <h2>Graphique TradingView (ticker actif)</h2>
+    <div id="tv" class="tv"></div>
+  </div>
 
-        // ==================== FONCTIONS UTILITAIRES ====================
-        function getRating(criterion, value) {
-            if (criterion.green(value)) return 'green';
-            if (criterion.orange(value)) return 'orange';
-            return 'red';
-        }
+  <div class="card">
+    <h1>3) Ratios + URLs (pour le ticker actif)</h1>
 
-        function formatValue(value, criterion) {
-            if (value === undefined || value === null) return 'N/A';
-            return criterion.percent ? value.toFixed(1) + '%' : value.toFixed(1);
-        }
+    <div class="split">
+      <div>
+        <div class="grid">
+          <div class="field">
+            <label>Secteur / Industrie</label>
+            <input id="sector" placeholder="Ex: Technology / Semiconductors" />
+          </div>
 
-        // ==================== VÉRIFICATION STATUT API ====================
-        function checkApiStatus() {
-            const statusDiv = document.getElementById('apiStatus');
-            const hasValidKey = FMP_API_KEY && 
-                               FMP_API_KEY !== '{{VERCEL_ENV_FMP_API_KEY}}' && 
-                               FMP_API_KEY.length > 10;
-            
-            if (hasValidKey) {
-                statusDiv.className = 'api-status ok';
-                statusDiv.innerHTML = `
-                    <span>✅ Clé API FMP chargée depuis l'environnement Vercel</span>
-                    <span style="color: var(--text-secondary);">(mode production)</span>
-                `;
-            } else {
-                statusDiv.className = 'api-status warning';
-                statusDiv.innerHTML = `
-                    <span>⚠️ Mode démonstration - Données simulées</span>
-                    <span style="color: var(--text-secondary);">
-                        ${isVercel ? 'Ajoutez FMP_API_KEY dans les variables d\'environnement Vercel' : 'API non configurée'}
-                    </span>
-                `;
-            }
-            return hasValidKey;
-        }
+          <div class="field"><label>P/E — Valeur</label><input id="pe" placeholder="Ex: 18.7" /></div>
+          <div class="field"><label>P/E — URL source</label><input id="pe_url" placeholder="https://..." /></div>
 
-        // ==================== AUTOCOMPLÉTION ====================
-        const searchInput = document.getElementById('searchInput');
-        const autocompleteDiv = document.getElementById('autocomplete');
+          <div class="field"><label>PEG — Valeur</label><input id="peg" placeholder="Ex: 1.4" /></div>
+          <div class="field"><label>PEG — URL source</label><input id="peg_url" placeholder="https://..." /></div>
 
-        searchInput.addEventListener('input', function() {
-            const input = this.value.toUpperCase();
-            if (input.length < 1) {
-                autocompleteDiv.style.display = 'none';
-                return;
-            }
+          <div class="field"><label>ROE moyen 5 ans — Valeur</label><input id="roe5y" placeholder="Ex: 34% ou 34" /></div>
+          <div class="field"><label>ROE moyen 5 ans — URL source</label><input id="roe5y_url" placeholder="https://..." /></div>
 
-            const matches = TOP_TICKERS.filter(t => t.includes(input)).slice(0, 10);
-            
-            if (matches.length > 0) {
-                autocompleteDiv.innerHTML = matches.map(t => 
-                    `<div class="autocomplete-item" onclick="selectTicker('${t}')">${t}</div>`
-                ).join('');
-                autocompleteDiv.style.display = 'block';
-            } else {
-                autocompleteDiv.style.display = 'none';
-            }
-        });
+          <div class="field"><label>Quick Ratio — Valeur</label><input id="quick" placeholder="Ex: 0.9" /></div>
+          <div class="field"><label>Quick Ratio — URL source</label><input id="quick_url" placeholder="https://..." /></div>
 
-        document.addEventListener('click', function(e) {
-            if (!autocompleteDiv.contains(e.target) && e.target !== searchInput) {
-                autocompleteDiv.style.display = 'none';
-            }
-        });
+          <div class="field"><label>Dette/Équité — Valeur</label><input id="de" placeholder="Ex: 1.5" /></div>
+          <div class="field"><label>Dette/Équité — URL source</label><input id="de_url" placeholder="https://..." /></div>
 
-        window.selectTicker = function(ticker) {
-            const current = searchInput.value.split(',').map(t => t.trim().toUpperCase());
-            if (!current.includes(ticker)) {
-                current.push(ticker);
-                searchInput.value = current.join(', ');
-            }
-            autocompleteDiv.style.display = 'none';
-        };
+          <div class="field"><label>Marge nette — Valeur</label><input id="netMargin" placeholder="Ex: 25% ou 25" /></div>
+          <div class="field"><label>Marge nette — URL source</label><input id="netMargin_url" placeholder="https://..." /></div>
 
-        // ==================== API FMP (AVEC FALLBACK MOCK) ====================
-        async function fetchTickerData(ticker) {
-            const hasValidKey = FMP_API_KEY && 
-                               FMP_API_KEY !== '{{VERCEL_ENV_FMP_API_KEY}}' && 
-                               FMP_API_KEY.length > 10;
+          <div class="field"><label>EV/EBITDA — Valeur</label><input id="evEbitda" placeholder="Ex: 17.2" /></div>
+          <div class="field"><label>EV/EBITDA — URL source</label><input id="evEbitda_url" placeholder="https://..." /></div>
 
-            // Si clé API valide, appeler l'API réelle
-            if (hasValidKey) {
-                try {
-                    // Profile pour les infos de base
-                    const profileUrl = `https://financialmodelingprep.com/api/v3/profile/${ticker}?apikey=${FMP_API_KEY}`;
-                    const profileRes = await fetch(profileUrl);
-                    const profile = await profileRes.json();
-                    
-                    if (profile && profile.length) {
-                        // Ratios TTM
-                        const ratiosUrl = `https://financialmodelingprep.com/api/v3/ratios-ttm/${ticker}?apikey=${FMP_API_KEY}`;
-                        const ratiosRes = await fetch(ratiosUrl);
-                        const ratios = await ratiosRes.json();
-                        
-                        // Key metrics
-                        const metricsUrl = `https://financialmodelingprep.com/api/v3/key-metrics-ttm/${ticker}?apikey=${FMP_API_KEY}`;
-                        const metricsRes = await fetch(metricsUrl);
-                        const metrics = await metricsRes.json();
+          <div class="field"><label>Couverture intérêts — Valeur</label><input id="intCov" placeholder="Ex: 8.4x" /></div>
+          <div class="field"><label>Couverture intérêts — URL source</label><input id="intCov_url" placeholder="https://..." /></div>
 
-                        return {
-                            sector: profile[0].sector || "N/A",
-                            name: profile[0].companyName || ticker,
-                            pe: profile[0].pe || 20,
-                            peg: 1.5,
-                            roe5: (ratios[0]?.returnOnEquityTTM * 100) || 15,
-                            quick: ratios[0]?.quickRatioTTM || 1.2,
-                            de: ratios[0]?.debtEquityRatioTTM || 0.8,
-                            margin: profile[0].netMargin || 15,
-                            evEbitda: metrics[0]?.enterpriseValueOverEBITDATTM || 12,
-                            intCover: ratios[0]?.interestCoverageTTM || 5,
-                            growth: 10,
-                            fcfYield: (metrics[0]?.freeCashFlowYieldTTM * 100) || 4,
-                            payout: (ratios[0]?.payoutRatioTTM * 100) || 25
-                        };
-                    }
-                } catch (e) {
-                    console.warn(`API error for ${ticker}:`, e);
-                }
-            }
-            
-            // Fallback données mock
-            return MOCK_DATA[ticker] || {
-                sector: "Unknown",
-                name: ticker,
-                pe: 15 + Math.random() * 25,
-                peg: 1.0 + Math.random() * 1.5,
-                roe5: 10 + Math.random() * 20,
-                quick: 0.7 + Math.random() * 1.5,
-                de: 0.5 + Math.random() * 1.2,
-                margin: 5 + Math.random() * 20,
-                evEbitda: 8 + Math.random() * 15,
-                intCover: 3 + Math.random() * 10,
-                growth: 5 + Math.random() * 15,
-                fcfYield: 3 + Math.random() * 8,
-                payout: 15 + Math.random() * 40
-            };
-        }
+          <div class="field"><label>Croissance CA (%/an) — Valeur</label><input id="revCagr" placeholder="Ex: 6% ou 6" /></div>
+          <div class="field"><label>Croissance CA — URL source</label><input id="revCagr_url" placeholder="https://..." /></div>
 
-        // ==================== ANALYSE PRINCIPALE ====================
-        async function analyzeTickers() {
-            const input = document.getElementById('searchInput').value;
-            const tickers = input.split(',').map(t => t.trim().toUpperCase()).filter(t => t);
-            
-            if (!tickers.length) return;
+          <div class="field"><label>FCF Yield — Valeur</label><input id="fcfYield" placeholder="Ex: 3.5% ou 3.5" /></div>
+          <div class="field"><label>FCF Yield — URL source</label><input id="fcfYield_url" placeholder="https://..." /></div>
 
-            document.getElementById('results').innerHTML = `
-                <div class="loading">
-                    ⏳ Analyse des données pour [${tickers.join(', ')}]...
-                </div>
-            `;
+          <div class="field"><label>Payout Ratio — Valeur</label><input id="payout" placeholder="Ex: 55% ou 55" /></div>
+          <div class="field"><label>Payout Ratio — URL source</label><input id="payout_url" placeholder="https://..." /></div>
+        </div>
 
-            // Charger toutes les données
-            const dataMap = {};
-            for (let ticker of tickers) {
-                dataMap[ticker] = await fetchTickerData(ticker);
-            }
+        <div class="row" style="margin-top:12px">
+          <button id="saveActive" class="miniBtn">Enregistrer ce ticker</button>
+          <button id="preview" class="miniBtn">Prévisualiser score</button>
+          <div style="flex:1"></div>
+          <div id="score" class="badge">Score: —</div>
+        </div>
+      </div>
 
-            renderResults(dataMap);
-        }
+      <div>
+        <div class="card" style="margin:0">
+          <h2>Liens rapides (ticker actif)</h2>
+          <div class="hint" id="linksBox">—</div>
+        </div>
+        <div class="card" style="margin:12px 0 0">
+          <h2>Notes (facultatif)</h2>
+          <div class="hint">Vous pouvez noter vos commentaires (cycle, risques, etc.). Sauvegardé par ticker.</div>
+          <textarea id="notes" placeholder="Ex: sensibilité aux taux, cyclicité semi-conducteurs..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        // ==================== RENDU COMPLET ====================
-        function renderResults(dataMap) {
-            const tickers = Object.keys(dataMap);
-            let html = '';
+  <div class="card">
+    <h1>4) Rapport Markdown (tous les tickers)</h1>
+    <pre id="md">Cliquez “Générer Markdown (tous)”.</pre>
+  </div>
 
-            // 1. TABLEAU DES RATIOS
-            html += `<div class="card">`;
-            html += `<div class="card-header"><h2>📋 TABLEAU DES RATIOS CLÉS</h2></div>`;
-            html += `<div class="table-wrapper"><table>`;
-            
-            // En-têtes
-            html += `<tr><th>Ticker</th><th>Secteur</th>`;
-            CRITERIA.forEach(c => html += `<th class="tooltip" data-tooltip="${c.name}">${c.name}</th>`);
-            html += `<th>Score</th></tr>`;
+</div>
 
-            // Lignes de données
-            for (let ticker of tickers) {
-                const d = dataMap[ticker];
-                let green = 0, orange = 0, red = 0;
-                
-                html += `<tr>`;
-                html += `<td><strong>${ticker}</strong><br><span style="font-size:11px; color:#5d6b82;">${d.name || ''}</span></td>`;
-                html += `<td>${d.sector || '—'}</td>`;
+<script>
+/* ---------------- Helpers tickers ---------------- */
+function normTicker(s){
+  const x = (s||"").trim().toUpperCase();
+  if(!x) return null;
+  if(x.includes(":")) return x;
+  return "NASDAQ:" + x; // défaut
+}
+function getTickerOnly(sym){ return sym.includes(":") ? sym.split(":")[1] : sym; }
+function parseTickerList(text){
+  return (text||"")
+    .split(",")
+    .map(normTicker)
+    .filter(Boolean);
+}
 
-                for (let c of CRITERIA) {
-                    const val = d[c.key] || 0;
-                    const rating = getRating(c, val);
-                    if (rating === 'green') green++;
-                    else if (rating === 'orange') orange++;
-                    else red++;
-                    
-                    html += `<td>`;
-                    html += `<span class="badge ${rating}" data-tooltip="${c.name}: ${formatValue(val, c)}">`;
-                    html += formatValue(val, c);
-                    html += `</span>`;
-                    html += `</td>`;
-                }
-                
-                html += `<td><span class="score-badge">${green}V/${orange}O/${red}R</span></td>`;
-                html += `</tr>`;
-            }
-            html += `</table></div></div>`;
+/* ---------------- TradingView ---------------- */
+function loadTradingView(symbol){
+  const el = document.getElementById("tv");
+  el.innerHTML = "";
+  const s = document.createElement("script");
+  s.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+  s.async = true;
+  s.innerHTML = JSON.stringify({
+    autosize: true,
+    symbol: symbol,
+    interval: "D",
+    timezone: "Europe/Paris",
+    theme: "dark",
+    style: "1",
+    locale: "fr",
+    enable_publishing: false,
+    allow_symbol_change: true,
+    support_host: "https://www.tradingview.com"
+  });
+  el.appendChild(s);
+}
 
-            // 2. ANALYSE PAR SECTEUR
-            const sectors = {};
-            tickers.forEach(t => {
-                const s = dataMap[t].sector || 'Autre';
-                if (!sectors[s]) sectors[s] = [];
-                sectors[s].push(t);
-            });
+/* ---------------- Seuils stricts (11 critères) ---------------- */
+function grade(key, v){
+  if(v==null || Number.isNaN(v)) return {c:"Orange", msg:"donnée manquante"};
+  switch(key){
+    case "pe":        return v<=16?{c:"Vert",msg:"valorisation attractive"}:(v<20?{c:"Orange",msg:"valorisation acceptable"}:{c:"Rouge",msg:"valorisation élevée"});
+    case "peg":       return v<=1.0?{c:"Vert",msg:"qualité de croissance"}:(v<1.5?{c:"Orange",msg:"croissance correcte"}:{c:"Rouge",msg:"croissance chère/risquée"});
+    case "roe5y":     return v>=0.15?{c:"Vert",msg:"rentabilité élevée"}:(v>=0.10?{c:"Orange",msg:"rentabilité moyenne"}:{c:"Rouge",msg:"rentabilité faible"});
+    case "quick":     return v>=1.0?{c:"Vert",msg:"bonne liquidité CT"}:(v>=0.5?{c:"Orange",msg:"liquidité à surveiller"}:{c:"Rouge",msg:"liquidité faible"});
+    case "de":        return v<=0.5?{c:"Vert",msg:"endettement maîtrisé"}:(v<=1.0?{c:"Orange",msg:"endettement modéré"}:{c:"Rouge",msg:"endettement élevé"});
+    case "netMargin": return v>=0.10?{c:"Vert",msg:"profitabilité solide"}:(v>=0.05?{c:"Orange",msg:"profitabilité moyenne"}:{c:"Rouge",msg:"profitabilité faible"});
+    case "evEbitda":  return v<=8?{c:"Vert",msg:"valorisation attractive"}:(v<12?{c:"Orange",msg:"valorisation correcte"}:{c:"Rouge",msg:"valorisation élevée"});
+    case "intCov":    return v>=5?{c:"Vert",msg:"couverture confortable"}:(v>=3?{c:"Orange",msg:"couverture limite"}:{c:"Rouge",msg:"couverture faible"});
+    case "revCagr":   return v>=0.10?{c:"Vert",msg:"croissance forte"}:(v>=0.05?{c:"Orange",msg:"croissance modérée"}:{c:"Rouge",msg:"croissance faible"});
+    case "fcfYield":  return v>=0.08?{c:"Vert",msg:"cash attractif"}:(v>=0.04?{c:"Orange",msg:"cash correct"}:{c:"Rouge",msg:"cash faible"});
+    case "payout":
+      if(v>1.0) return {c:"Rouge",msg:"dividende non soutenable"};
+      if(v>=0.20 && v<=0.80) return {c:"Vert",msg:"payout soutenable"};
+      return {c:"Orange",msg:"prudence/tension"};
+    default: return {c:"Orange",msg:"-"};
+  }
+}
+function parseNumLoose(s){
+  if(s==null) return null;
+  let x = String(s).trim();
+  if(!x) return null;
+  x = x.replaceAll(" ", "").replaceAll("%","").replaceAll("x","").replaceAll("X","");
+  x = x.replaceAll(",", ".");
+  const v = Number(x);
+  return Number.isFinite(v) ? v : null;
+}
+function normalizePercentKeys(key, v){
+  if(v==null) return null;
+  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key) && v > 1.5) return v/100;
+  return v;
+}
+function fmt(key, v){
+  if(v==null) return "N/A";
+  if(["roe5y","netMargin","revCagr","fcfYield","payout"].includes(key)) return (v*100).toFixed(1) + "%";
+  if(["evEbitda","intCov"].includes(key)) return v.toFixed(1) + "x";
+  return v.toFixed(2);
+}
+function cite(url){
+  if(!url || !url.trim()) return " [Source manquante]";
+  return ` [[Source](${url.trim()})]`;
+}
+function scoreGlobal(colors){
+  let V=0,O=0,R=0;
+  for(const c of colors){ if(c==="Vert") V++; else if(c==="Orange") O++; else R++; }
+  return `${V}V/${O}O/${R}R`;
+}
 
-            html += `<div class="card">`;
-            html += `<div class="card-header"><h2>🏢 ANALYSE PAR SECTEUR</h2></div>`;
-            html += `<div class="sector-grid">`;
+const KEYS = ["pe","peg","roe5y","quick","de","netMargin","evEbitda","intCov","revCagr","fcfYield","payout"];
+const LABELS = ["P/E","PEG","ROE 5ans","Quick Ratio","Dette/Équité","Marge nette","EV/EBITDA","Couverture intérêts","Croiss. CA","FCF Yield","Payout"];
 
-            for (let sector in sectors) {
-                const sectorTickers = sectors[sector];
-                const avgPE = sectorTickers.reduce((acc, t) => acc + dataMap[t].pe, 0) / sectorTickers.length;
-                const avgMargin = sectorTickers.reduce((acc, t) => acc + dataMap[t].margin, 0) / sectorTickers.length;
-                
-                html += `<div class="sector-card">`;
-                html += `<div class="sector-name">${sector}</div>`;
-                html += `<p><span class="text-gray">Sociétés:</span> ${sectorTickers.join(', ')}</p>`;
-                html += `<p><span class="text-gray">P/E moyen:</span> ${avgPE.toFixed(1)}</p>`;
-                html += `<p><span class="text-gray">Marge moyenne:</span> ${avgMargin.toFixed(1)}%</p>`;
-                
-                // Dynamique du secteur
-                if (sector.includes('Technology')) {
-                    html += `<p class="text-orange">📈 Forte croissance, valorisations élevées</p>`;
-                } else if (sector.includes('Financial')) {
-                    html += `<p class="text-green">💰 Secteur bancaire, P/E modérés</p>`;
-                } else if (sector.includes('Consumer')) {
-                    html += `<p class="text-orange">🛍️ Dépendant de la consommation</p>`;
-                } else if (sector.includes('Communication')) {
-                    html += `<p class="text-orange">📱 Médias et tech, croissance variable</p>`;
-                }
-                html += `</div>`;
-            }
-            html += `</div></div>`;
+/* ---------------- Storage per ticker ---------------- */
+const LS_KEY = "fa_multi_tickers_v1";
 
-            // 3. VERDICT INDIVIDUEL
-            html += `<div class="card">`;
-            html += `<div class="card-header"><h2>📌 VERDICT INDIVIDUEL</h2></div>`;
-            html += `<div class="verdict-grid">`;
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); }
+  catch{ return {}; }
+}
+function saveState(state){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function ensureTicker(state, sym){
+  if(!state[sym]){
+    state[sym] = {
+      sector: "",
+      notes: "",
+      metrics: Object.fromEntries(KEYS.map(k => [k, {value:"", url:""}]))
+    };
+  }
+  return state[sym];
+}
 
-            for (let ticker of tickers) {
-                const d = dataMap[ticker];
-                let green = 0, orange = 0, red = 0;
-                const rougeList = [];
-                
-                CRITERIA.forEach(c => {
-                    const rating = getRating(c, d[c.key] || 0);
-                    if (rating === 'green') green++;
-                    else if (rating === 'orange') orange++;
-                    else {
-                        red++;
-                        rougeList.push(c.name);
-                    }
-                });
+/* ---------------- UI binding ---------------- */
+const selectEl = document.getElementById("tickerSelect");
+const activeInfo = document.getElementById("activeInfo");
+const linksBox = document.getElementById("linksBox");
 
-                html += `<div class="verdict-card">`;
-                html += `<div class="verdict-header">`;
-                html += `<span class="verdict-ticker">${ticker}</span>`;
-                html += `<span class="score-badge">${green}V/${orange}O/${red}R</span>`;
-                html += `</div>`;
-                
-                html += `<p><span class="text-green">✓</span> ROE ${d.roe5.toFixed(1)}% · Marge ${d.margin.toFixed(1)}% · Int. Cover ${d.intCover.toFixed(1)}x</p>`;
-                html += `<p><span class="text-orange">⚖️</span> P/E ${d.pe.toFixed(1)} · PEG ${d.peg.toFixed(2)} · EV/EBITDA ${d.evEbitda.toFixed(1)}</p>`;
-                
-                let conclusion = green >= 8 ? 'Profil qualité attractive' : (green >= 5 ? 'Correct sans marge sécurité' : 'Spéculatif/cyclique');
-                html += `<p><strong>CONCLUSION:</strong> ${conclusion}</p>`;
-                
-                if (rougeList.length) {
-                    html += `<div class="flag-red"><span class="text-red">🚩 Drapeaux rouges:</span> ${rougeList.join(', ')}</div>`;
-                } else {
-                    html += `<div class="flag-red" style="background:#1a2e2a;"><span class="text-green">✅ Aucun drapeau rouge</span></div>`;
-                }
-                html += `</div>`;
-            }
-            html += `</div></div>`;
+function setLinks(sym){
+  const t = getTickerOnly(sym);
+  const lower = t.toLowerCase();
+  linksBox.innerHTML = `
+    <div class="row" style="gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="badge">${sym}</span>
+      <a target="_blank" href="https://stockanalysis.com/stocks/${lower}/financials/ratios/">StockAnalysis Ratios</a>
+      <a target="_blank" href="https://stockanalysis.com/stocks/${lower}/financials/">StockAnalysis Financials</a>
+      <a target="_blank" href="https://stockanalysis.com/stocks/${lower}/financials/cash-flow-statement/">StockAnalysis Cash Flow</a>
+      <a target="_blank" href="https://finance.yahoo.com/quote/${t}/key-statistics">Yahoo Statistics</a>
+      <a target="_blank" href="https://www.marketbeat.com/stocks/NASDAQ/${t}/financials/">MarketBeat</a>
+    </div>
+    <div class="hint" style="margin-top:10px">
+      Conseil: copiez vos chiffres depuis “Ratios” quand possible, puis collez ici + l’URL de la page comme citation.
+    </div>
+  `;
+}
 
-            // 4. CLASSEMENT AUTOMATIQUE
-            const ranked = { A: [], B: [], C: [] };
-            
-            for (let ticker of tickers) {
-                let green = 0, red = 0;
-                CRITERIA.forEach(c => {
-                    const rating = getRating(c, dataMap[ticker][c.key] || 0);
-                    if (rating === 'green') green++;
-                    else if (rating === 'red') red++;
-                });
-                
-                if (green >= 8 && red <= 1) ranked.A.push(ticker);
-                else if (red >= 3) ranked.C.push(ticker);
-                else ranked.B.push(ticker);
-            }
+function fillFormFromState(state, sym){
+  const rec = ensureTicker(state, sym);
+  document.getElementById("sector").value = rec.sector || "";
+  document.getElementById("notes").value = rec.notes || "";
+  for(const k of KEYS){
+    document.getElementById(k).value = rec.metrics[k]?.value || "";
+    document.getElementById(k+"_url").value = rec.metrics[k]?.url || "";
+  }
+  setLinks(sym);
+  activeInfo.textContent = `Actif: ${sym}`;
+  loadTradingView(sym);
+  previewScoreFor(sym, state);
+}
 
-            html += `<div class="card">`;
-            html += `<div class="card-header"><h2>📊 CLASSEMENT GLOBAL</h2></div>`;
-            
-            if (ranked.A.length) {
-                html += `<div class="rank-box rank-a">`;
-                html += `<strong>🟢 QUALITÉ - À PRIVILÉGIER</strong><br>`;
-                html += ranked.A.map
+function saveFormToState(state, sym){
+  const rec = ensureTicker(state, sym);
+  rec.sector = (document.getElementById("sector").value || "").trim();
+  rec.notes  = (document.getElementById("notes").value || "").trim();
+  for(const k of KEYS){
+    rec.metrics[k].value = document.getElementById(k).value || "";
+    rec.metrics[k].url   = document.getElementById(k+"_url").value || "";
+  }
+}
+
+function previewScoreFor(sym, state){
+  const rec = ensureTicker(state, sym);
+  const colors = KEYS.map(k=>{
+    let v = parseNumLoose(rec.metrics[k].value);
+    v = normalizePercentKeys(k, v);
+    return grade(k, v).c;
+  });
+  document.getElementById("score").textContent = "Score: " + scoreGlobal(colors);
+}
+
+/* ---------------- Markdown generation (tous tickers) ---------------- */
+function buildMarkdownAll(state, symbols){
+  const today = new Date().toISOString().slice(0,10);
+
+  // Table
+  let md = `**ANALYSE FONDAMENTALE COMPLÈTE - ACTIONS** (généré le ${today})\n\n`;
+  md += `**TICKERS** : ${symbols.map(getTickerOnly).join(", ")}\n\n`;
+
+  md += `## 1. TABLEAU DES RATIOS CLÉS\n\n`;
+  md += `| Ticker | Secteur | P/E | PEG | ROE 5ans | Quick Ratio | Dette/Équité | Marge nette | EV/EBITDA | Couverture intérêts | Croiss. CA | FCF Yield | Payout | **Score global** |\n`;
+  md += `|--------|---------|-----|-----|----------|-------------|--------------|-------------|-----------|--------------------|------------|-----------|--------|------------------|\n`;
+
+  // sector grouping
+  const sectorMap = new Map();
+  const verdicts = [];
+  const ranking = [];
+
+  for(const sym of symbols){
+    const t = getTickerOnly(sym);
+    const rec = ensureTicker(state, sym);
+    const sector = rec.sector || "N/A";
+    sectorMap.set(sector, [...(sectorMap.get(sector)||[]), t]);
+
+    const cells = {};
+    const colors = [];
+
+    for(const k of KEYS){
+      let v = parseNumLoose(rec.metrics[k].value);
+      v = normalizePercentKeys(k, v);
+      const g = grade(k, v);
+      colors.push(g.c);
+      cells[k] = `${fmt(k,v)} ${g.c} - ${g.msg}${cite(rec.metrics[k].url)}`;
+    }
+    const sg = scoreGlobal(colors);
+
+    md += `| ${t} | ${sector} | ${cells.pe} | ${cells.peg} | ${cells.roe5y} | ${cells.quick} | ${cells.de} | ${cells.netMargin} | ${cells.evEbitda} | ${cells.intCov} | ${cells.revCagr} | ${cells.fcfYield} | ${cells.payout} | **${sg}** |\n`;
+
+    const reds = colors.map((c,i)=>({c,i})).filter(x=>x.c==="Rouge").map(x=>LABELS[x.i]);
+    const V = colors.filter(c=>c==="Vert").length;
+
+    let conclusion = (V>=7 && reds.length<=1) ? "Profil qualité attractive" :
+                     (reds.length>=3) ? "Spéculatif/cyclique" :
+                     "Correct sans marge sécurité";
+
+    verdicts.push(`**${t}** : ✅ Qualité fondamentaux (ROE, marges, bilan, couverture) à commenter. ✅ Valorisation vs secteur (P/E, PEG, EV/EBITDA) à commenter. ✅ Points forts/vigilance. **CONCLUSION** : « ${conclusion} ». **Score** : ${sg} — **Drapeaux rouges** : ${reds.length?reds.join(", "):"Aucun"}.`);
+
+    ranking.push({t, sg, V, reds: reds.length});
+  }
+
+  // Section 2
+  md += `\n## 2. ANALYSE PAR SECTEUR\n`;
+  for(const [sec, list] of sectorMap.entries()){
+    md += `\n**${sec}** : ${list.join(", ")}\n- 1-2 phrases sur dynamique actuelle (croissance, cycle, marges, capex).\n- Position relative des titres vs pairs.\n- Mises en garde spécifiques.\n`;
+  }
+
+  // Section 3
+  md += `\n## 3. VERDICT INDIVIDUEL\n\n${verdicts.join("\n\n")}\n`;
+
+  // Section 4 ranking buckets
+  const A = ranking.filter(x=>x.V>=7 && x.reds<=1);
+  const C = ranking.filter(x=>x.reds>=3);
+  const B = ranking.filter(x=>!A.includes(x) && !C.includes(x));
+
+  md += `\n## 4. CLASSEMENT GLOBAL (fondamentaux uniquement)\n\n`;
+  md += `**A. QUALITÉ - À PRIVILÉGIER**\n`;
+  md += (A.length ? A.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+  md += `**B. NEUTRE - À SURVEILLER**\n`;
+  md += (B.length ? B.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+  md += `**C. ÉVITER**\n`;
+  md += (C.length ? C.map(x=>`• ${x.t} : Score ${x.sg}.`).join("\n") : "• Aucun") + "\n\n";
+
+  // Section 5
+  md += `## 5. RÉSUMÉ FINAL\n`;
+  md += `1. Actions recommandées + potentiel sectoriel : (…)\n`;
+  md += `2. Risque global panier : (…)\n`;
+  md += `3. Logique allocation : (…)\n`;
+
+  return md;
+}
+
+/* ---------------- Events ---------------- */
+document.getElementById("apply").addEventListener("click", ()=>{
+  const symbols = parseTickerList(document.getElementById("tickersInput").value);
+  // rebuild select
+  selectEl.innerHTML = "";
+  for(const sym of symbols){
+    const opt = document.createElement("option");
+    opt.value = sym;
+    opt.textContent = sym;
+    selectEl.appendChild(opt);
+  }
+
+  const state = loadState();
+  // Ensure records exist
+  for(const sym of symbols) ensureTicker(state, sym);
+  saveState(state);
+
+  if(symbols.length){
+    selectEl.value = symbols[0];
+    fillFormFromState(state, symbols[0]);
+  }else{
+    document.getElementById("md").textContent = "Liste vide.";
+  }
+});
+
+selectEl.addEventListener("change", ()=>{
+  const sym = selectEl.value;
+  const state = loadState();
+  fillFormFromState(state, sym);
+});
+
+document.getElementById("loadTv").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  loadTradingView(sym);
+});
+
+document.getElementById("openLinks").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  const t = getTickerOnly(sym);
+  const lower = t.toLowerCase();
+  const urls = [
+    `https://stockanalysis.com/stocks/${lower}/financials/ratios/`,
+    `https://stockanalysis.com/stocks/${lower}/financials/`,
+    `https://finance.yahoo.com/quote/${t}/key-statistics`,
+  ];
+  for(const u of urls) window.open(u, "_blank");
+});
+
+document.getElementById("saveActive").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  const state = loadState();
+  saveFormToState(state, sym);
+  saveState(state);
+  previewScoreFor(sym, state);
+  activeInfo.textContent = `Actif: ${sym} (enregistré)`;
+});
+
+document.getElementById("preview").addEventListener("click", ()=>{
+  const sym = selectEl.value;
+  const state = loadState();
+  // preview based on current form (save then compute)
+  saveFormToState(state, sym);
+  previewScoreFor(sym, state);
+});
+
+document.getElementById("genAll").addEventListener("click", ()=>{
+  const symbols = parseTickerList(document.getElementById("tickersInput").value);
+  const state = loadState();
+
+  // Save current active form before generating
+  if(selectEl.value){
+    saveFormToState(state, selectEl.value);
+    saveState(state);
+  }
+
+  document.getElementById("md").textContent = buildMarkdownAll(state, symbols);
+});
+
+document.getElementById("copy").addEventListener("click", async ()=>{
+  await navigator.clipboard.writeText(document.getElementById("md").textContent);
+});
+
+/* ---------------- Initial load ---------------- */
+document.getElementById("apply").click();
+</script>
+</body>
+</html>
            
+
 
 
 
